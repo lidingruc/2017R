@@ -23,11 +23,9 @@
 ## 第3讲、立靶：数据汇总
 课前预习：阅读一篇报告，总结它是如何论述自己的观点的（课堂上回答问题）。
 
-课堂演示：基于tidyverse的数据分析过程展示
+课堂演示：基于tidyverse的数据分析过程展示。大纲：http://note.youdao.com/noteshare?id=94c815919f88613d071d2254934ca53e
 
-示例1：http://r4ds.had.co.nz/data-visualisation.html#introduction-1
-
-课后作业：将一份工作代码敲进电脑。
+课后作业：完成大纲中的R基础学习。
 
 ## 第4讲、夯基：关于R的基础
 课前预习：将一份练习代码敲进电脑
