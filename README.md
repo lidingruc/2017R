@@ -21,11 +21,17 @@
 课后作业：针对大数据时代和社会研究方法中的某个问题，你如何积累条件并将之解决？短文原创1000字左右。
 
 ## 第3讲、立靶：数据汇总
-课前预习：阅读一篇报告，总结它是如何论述自己的观点的（课堂上回答问题）。
+课前预习：预习教材中数据可视化和基础部分
 
-课堂演示：基于tidyverse的数据分析过程展示。大纲：http://note.youdao.com/noteshare?id=94c815919f88613d071d2254934ca53e
+http://r4ds.had.co.nz/workflow-basics.html
 
-课后作业：完成大纲中的R基础学习。
+http://r4ds.had.co.nz/data-visualisation.html
+
+课堂演示：基于tidyverse的数据分析过程展示。请认真阅读课程演示大纲和设计：
+
+http://note.youdao.com/noteshare?id=94c815919f88613d071d2254934ca53e
+
+课后作业：完成大纲中的R基础操作部分的练习；尝试将ggplot的cheatsheet中的示例敲出来。
 
 ## 第4讲、夯基：关于R的基础
 课前预习：将一份练习代码敲进电脑
