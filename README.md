@@ -31,7 +31,7 @@ http://r4ds.had.co.nz/data-visualisation.html
 
 http://note.youdao.com/noteshare?id=94c815919f88613d071d2254934ca53e
 
-课后作业：完成大纲中的R基础操作部分的练习；尝试将ggplot的cheatsheet中的示例敲出来。
+课后作业：完成大纲中的R基础操作部分的自学；尝试将ggplot的cheatsheet中的示例敲出来。
 
 ## 第4讲、夯基：关于R的基础
 课前预习：将一份练习代码敲进电脑
@@ -45,11 +45,13 @@ http://note.youdao.com/noteshare?id=94c815919f88613d071d2254934ca53e
 课后作业：用R完成几道简单的题目。
 
 ## 第5讲、备砖：数据管理
-课前预习：将一份代码敲进电脑
+课前预习：将一份代码敲进电脑(R-basic cheatsheet)
 
 课堂演示：如果利用dplyr包进行数据管理
 
 示例1：http://r4ds.had.co.nz/transform.html
+
+示例2：http://moderndive.com/5-wrangling.html
 
 课后作业：用R完成一个数据处理的任务
 
