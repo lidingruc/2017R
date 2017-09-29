@@ -61,6 +61,7 @@ http://note.youdao.com/noteshare?id=94c815919f88613d071d2254934ca53e
 课堂演示：如何利用ggplot画图
 
 示例1：http://moderndive.com/3-viz.html
+示例2：http://r4ds.had.co.nz/data-visualisation.html
 
 课后作业：用R完成一个数据可视化的任务。
 
@@ -74,51 +75,96 @@ http://note.youdao.com/noteshare?id=94c815919f88613d071d2254934ca53e
 课后作业：在实例的基础上完成几个扩展问题
 
 ## 第8讲、推论：统计检验
-课前预习:
+课前预习:第二讲讲义中关于抽样和统计推论的部分
 
-课堂演示:
+课堂演示:如何用R来进行卡方检验、T检验、方差检验、分析检验，模拟抽样分布
 
-示例1：http://moderndive.com/B-appendixB.html
+示例1：http://moderndive.com/7-sim.html
 
-示例2：https://github.com/andrewpbray/infer
+示例2：http://moderndive.com/8-hypo.html
 
-课后作业:
+示例3：http://moderndive.com/9-ci.html
+
+课后作业:阅读 http://moderndive.com/B-appendixB.html；https://github.com/andrewpbray/infer
 
 ## 第9讲、建模：线性回归
-课前预习
-课堂演示
-课后作业
+课前预习：预习回归模型相关的内容
+
+课堂演示：
+
+示例1：http://r4ds.had.co.nz/model-basics.html
+
+示例2：http://moderndive.com/6-regression.html
+
+
+课后作业：将示例中的命令操作一遍
 
 ## 第10讲、控制：一般化回归
-课前预习
+课前预习：预习回归诊断、模型选择的相关教材
+
 课堂演示
-课后作业
+示例1：http://r4ds.had.co.nz/model-building.html
+
+示例2：http://r4ds.had.co.nz/many-models.html
+课后作业：将示例联系一遍，并完成其中的作业题。
 
 ## 第11讲、连通：网络分析
-课前预习
-课堂演示
-课后作业
+
+课前预习：预习社会网络分析的基本概念和历史
+
+网址：http://note.youdao.com/share/?id=28c7b0a4e947ae29462fb424cf11dd21&type=note#/
+
+课堂演示：
+
+网址：http://note.youdao.com/noteshare?id=253f889e679ee73b33423819e18b6604
+
+课后作业：将相关演示命令操作一遍
 
 ## 第12讲、邻里：空间分析
-课前预习
-课堂演示
-课后作业
+
+课前预习：空间分析的基本原理
+
+网址1：http://note.youdao.com/noteshare?id=92cbe89d3e03cc530ac28c4a0eb6449e
+网址2：http://note.youdao.com/noteshare?id=4f4180ea28db7fdd238b882b681c5cd2
+
+课堂演示：
+
+网址：http://www.people.fas.harvard.edu/~zhukov/spatial.html
+
+课后作业：将演示中的相关命令和问题操作一遍。
 
 ## 第13讲、异型：文本分析
-课前预习
-课堂演示
-课后作业
+
+课前预习：http://note.youdao.com/noteshare?id=f0d94703ba72b57c54ad9318bdf0f274
+
+课堂演示：http://tidytextmining.com/ 
+
+课后作业：将演示教材中的例子操作一遍。
 
 ## 第14讲、采集：爬虫与数据获取
-课前预习
-课堂演示
-课后作业
+
+课前预习：http://note.youdao.com/noteshare?id=57cc2a7d0f893b58d4fbb217f65f167d
+
+课堂演示：http://note.youdao.com/noteshare?id=6d0aab0f55880292730ff9535488b356
+
+课后作业：尝试爬取一个网站。
 
 ## 第15讲、新招：python爬虫
-课前预习
-课堂演示
-课后作业
 
+课前预习：
+
+http://note.youdao.com/noteshare?id=8b5797ca96ee80737a6a9048c0423b6f
+
+http://note.youdao.com/noteshare?id=ab8f1f4e84519a6eb3881c8d7ca37841
+
+http://note.youdao.com/noteshare?id=aa3b31703ff6468eb2c884494e11b939
+
+课堂演示：
+
+http://note.youdao.com/noteshare?id=8d72a2741f381b292d40c7583047c891
+
+课后作业：
+安装配置好python，尝试爬取一个网页
  
 
 
