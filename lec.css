@@ -46,3 +46,20 @@ pre {
   width: 45%;
   height: 45%;
 }
+
+.column-left{
+  float: left;
+  width: 40%;
+  text-align: left;
+}
+
+.column-center{
+  display: inline-block;
+  width: 30%;
+  text-align: center;
+}
+.column-right{
+  float: right;
+  width: 60%;
+  text-align: right;
+}

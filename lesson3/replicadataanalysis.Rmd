@@ -275,6 +275,19 @@ commit之后，修改只是保存在了缓存库里面。
   - 兼容html语法和CSS设定
 **技巧：**可以将一个[语法手册](https://www.rstudio.com/resources/cheatsheets/)放在手边，随时参考 .
 
+## Rmd 代码块参数设置
+1. include=FALSE
+代码可以执行，报告(html、word)中不出现代码和结果，但是运行的结果存在workspace中，可以直接调用
+2. echo = FALSE
+执行代码，打印结果，但是不打印代码~即最终报告中出现的结果，没有代码
+3. message = FALSE 
+执行代码，打印代码，不打印结果
+4. warning = FALSE
+执行代码，不打印出warning的信息
+5. fig.cap = "..."
+输出图形结果时添加标题
+6.fig.width / fig.height设定输出图大小
+
 ## Rmd文件的编译 {#myImagePage}
 编辑完成之后可以通过Rstudio上的Knit按钮进行转码打印
 ![](pic/knit.png)
