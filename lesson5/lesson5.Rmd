@@ -1,0 +1,614 @@
+---
+title: "备砖：<br> 用R进行数据管理"
+author: "李丁"
+date: "2017年10月10日"
+output:
+  ioslides_presentation:
+    highlight: pygments
+    widescreen: yes
+    css: ../lec.css
+---
+
+## 内容提纲
+
+- 数据导入 Data import
+    + 文本数据
+    + SPSS数据
+    + stata数据
+    + sas数据
+    
+- 数据整理 Tidy data
+    + 理想的数据结构
+    + 宽数据变长数据
+    + 长数据变宽数据
+    + 数据的合并
+
+## 内容提纲
+
+- 变量管理 Data wrangling with `dplyr`
+    + 选择变量：select
+    + 选择案例：filter
+    + 创建变量：mutate
+    + 重新编码：recode
+    + 排序变量：rearrange
+    + 分组汇总：group by & summarize
+
+
+# 数据读入
+
+## R读入文本文件
+使用tidyverse中的readr包：
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+```{r,eval = FALSE}
+library(readr)
+dataset <- read_csv(文件路径和文件名)
+```
+- read_csv()  读入csv文件,
+- read_csv2() 读入封号分割文件
+- read_tsv()  读入制表符分割文件 
+- read_delim() 读入各种固定分隔符文件.
+- read_fwf()  读入固定宽度文件；用 fwf_widths() or fwf_positions()设定栏位 
+- read_table() 读入空格分割的固定宽度文件
+- read_log() 读入Apache风格的log文件。更复可参考`webreadr` 。
+
+## R读入固定分隔文件{#myImagePage2}
+使用菜单：
+
+<div style="float: left;width: 30%;text-align: left;">
+![](pic/importdata.png)
+</div>
+
+<div style="float: right;width: 70%;text-align: right;">
+![](pic/importdata2.png)
+</div>
+
+
+## R读入固定分割文件
+```{r,massage= FALSE,warning=FALSE}
+library(readr)
+bike <- read_delim("nc_bike_crash.csv", ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+```
+
+
+## R读入固定分割文件
+不用readr中的命令
+```{r, eval=FALSE}
+bike <- read.csv("nc_bike_crash.csv", 
+                 sep = ";", 
+                 stringsAsFactors = FALSE) %>%
+       tbl_df()
+```
+
+下载数据 https://stat.duke.edu/~mc301/data/nc_bike_crash.csv
+
+更多信息 https://stat.duke.edu/~mc301/data/nc_bike_crash.html.
+
+
+## 查看数据及其属性
+命令格式：
+```{r,eval =FALSE}
+View(data)
+class(data)
+str(data)
+head(data)
+dim(data)
+names(data)
+```
+
+例如：
+```{r}
+str(bike)
+```
+
+
+## 读入SPSS、stata或SAS数据
+
+```{r,eval= FALSE}
+library(haven)
+data1 <- read_sav("路径+文件名.sav")
+data2 <- read_stata("路径+文件名.dta",encoding ="GB2312")
+data3 <- read_sas("路径+文件名.sas7bdat")
+```
+
+
+haven包读入这些数据后，标签变为变量的属性。
+
+Stata14之前版本的数据文件Encoding信息,中文数据可能是GB2312编码。
+
+Stata14版本支持unicode编码，utf-8，R可以读入。
+
+## 读入CGSS数据:Stata{#myImagePage}
+stata2014之前的数据Rstudio预览标签可能为乱码，设定Encoding参数即可。
+
+![](pic/readcgss.png)
+
+```{r,eval = FALSE}
+library(haven)
+cgss2003 <- read_dta("cgss2003.dta")
+```
+
+## 读入CGSS数据:SPSS{#myImagePage}
+SPSS数据默认unicode编码。但有些中文数据仍可能存在乱码。可尝试将数据另存为SPSS7.0版本，然后读入。
+
+![](pic/readspss.png) 
+
+## 如何使用label信息？
+
+haven 包默认导入数据后,变量标签的定义位于数据库每列字段的 label属性当中,数值标签的定义在每列字段的 labels 属性当中。
+
+```{r}
+library(haven)
+cgss2003 <- read_sav("CGSS2003b.sav")  # spss7.0版数据
+str(cgss2003$sitetype)
+```
+
+## 如何使用label信息？{#myImagePage2}
+直接统计分析，输出中没有标签信息
+<div style="float: left;width: 40%;text-align: left;">
+```{r}
+cgss2003 %>%  count(sitetype)
+```
+</div>
+
+<div style="float: right;width: 60%;text-align: right;">
+```{r}
+ggplot(cgss2003, aes(x=sitetype)) +
+  geom_bar() + 
+  scale_x_discrete(drop=TRUE)
+```
+</div>
+
+## 如何使用label信息？
+使用attr函数查看标签信息
+
+```{r}
+attr(cgss2003$sitetype,"label")
+attr(cgss2003$sitetype,"labels")
+```
+
+## 如何使用label信息:使用sjPlot包分析
+
+```{r , warning = FALSE,message= FALSE}
+#if(!require(sjmisc)) install.packages("sjmisc")
+if(!require(sjPlot)) install.packages("sjPlot")
+sjt.frq(cgss2003$sitetype)
+```
+
+## 如何使用label信息:使用sjPlot包分析
+```{r,fig.height= 4}
+sjp.setTheme(theme.font ='STXihei' ) # STHeiti也可
+cgss2003 %>%   select(sitetype) %>% 
+  sjplot(fun="frq")
+```
+
+[更多介绍1](https://strengejacke.wordpress.com/2016/11/14/pipe-friendly-workflow-with-sjplot-sjmisc-and-sjstats-part-1-rstats-tidyverse/);[更多介绍2](https://strengejacke.wordpress.com/sjplot-r-package/)
+
+
+## 将带取值标签的变量读入为因子
+
+```{r,fig.height=2.5}
+library(haven)
+read_sav("CGSS2003b.sav") %>%
+  filter(sitetype>0) %>%
+  select(sitetype) %>% 
+  as_factor(only_labelled = TRUE) %>% 
+  droplevels() %>% 
+  sjplot(fun="frq",axis.title="调查地类型")
+```
+<br>也可用SJ[(strange jack)](http://www.strengejacke.de/sjPlot/)的`sjmisc::to_label()`命令将标签变为取值。<br>注意stata或spss数值变量如果定义了用户缺失值标签，最好先删除。
+
+## foreign包读入数据
+
+foreign包读入外部数据时可选参数更多。`read.dta`,`read.spss`导入数据后,变量标签的定义在 variable.labels属性当中,<br>取值标签存在label.table属性中，默认情况下取值标签则由参数 use.value.labels 控制转化为 factor 类型,如果有些取值没有label,会自动添加。
+```{r,warning= FALSE}
+cgss <- foreign::read.spss("CGSS2003b.sav")
+attr(cgss, "variable.labels")[1:6]
+attr(attr(cgss,'label.table')$sitetype,'names')
+```
+
+## foreign读入数据
+如果选择不转化取值标签，标签位置有所不同
+```{r}
+cgss <- foreign::read.spss("CGSS2003b.sav",
+                           use.value.labels=FALSE)
+attr(cgss$sitetype,"value.labels")
+attr(attr(cgss,'label.table')$sitetype,'names')
+```
+sjlabelled包的整合了haven包和foreign包，可以选择由哪个包来读数据。(更多介绍)[http://strengejacke.de/sjPlot/datainit/]
+
+
+## 针对中文数据的改进
+陈华珊自定义的ezdf包针对中文做了一些改进，将变量标签存在了meta数据框中,可分别设变量标签和文本变量的编码.并定义了简单的汇总函数，可以将取值标签自动添加到汇总统计中。
+```{r,eval= FALSE}
+# 安装必要的包，运行一次即可
+install.packages('data.table')
+library(devtools)
+options(download.file.method = "wininet")
+install_git("https://github.com/huashan/ezdf")
+install_github('huashan/pander')
+
+# 加载包
+library(ezdf)
+dat <- readStata(file,varNameEncoding="GB2312",charEncoding="GBK")
+```
+
+更多信息:https://github.com/huashan/ezdf/blob/master/Doc/Easy_Data.pdf
+
+
+##  注意: Strings (characters) 和 factors的差异
+
+- 默认情况R会将字符当做因子变量处理（统计渊源）
+- 有时候会带来麻烦
+- 使用 `stringsAsFactors = FALSE` 修改默认设定
+
++ 可以将其他数据导出为csv文件(注意编码)然后读入R 
+
+# 数据整理
+
+## Tidy data {#myImagePage2}
+
+1. 每个变量构成一列
+2. 每个案例构成一行
+3. 每个取值都有自己的单元格
+4. 每类观察对象自成一个表
+<div class="columns-1">
+![](pic/tidy1.png)
+</div>
+## 比较下面几个数据
+
+<div class="question">
+下面哪种数据最好用？
+</div>
+
+<div class="columns-2">
+
+```{r}
+table1
+```
+
+<br><br><br><br>
+
+```{r}
+table2
+```
+</div>
+
+## 比较下面几个数据
+
+<div class="columns-2">
+
+```{r}
+table3
+```
+
+<br><br><br><br>
+
+```{r}
+table4a
+table4b
+```
+</div>
+
+##  使用示例：创建新变量
+
+```{r}
+table1 %>% 
+  mutate(rate = cases / population * 10000)
+```
+
+## 使用示例：汇总
+```{r}
+table1 %>% 
+  count(year, wt = cases)
+```
+
+## 使用示例：作图
+```{r}
+library(ggplot2)
+ggplot(table1, aes(year, cases)) + 
+  geom_line(aes(group = country), colour = "grey50") + 
+  geom_point(aes(colour = country))
+```
+
+## 宽数据变长数据{#myImagePage2}
+
+![](pic/tidy2.png)
+
+## 宽数据变长数据
+使用`gather`命令
+
+原变量名列表归为新变量key=,取值归入新变量value=
+
+```{r}
+table4a %>% 
+  gather(`1999`, `2000`, key = "year", value = "cases")
+```
+
+## 宽数据变长数据
+```{r}
+table4b %>% 
+  gather(`1999`, `2000`, key = "year", value = "population")
+```
+
+
+## 两个数据合并
+
+```{r}
+tidy4a <- table4a %>% 
+  gather(`1999`, `2000`, key = "year", value = "cases")
+tidy4b <- table4b %>% 
+  gather(`1999`, `2000`, key = "year", value = "population")
+left_join(tidy4a, tidy4b)
+```
+
+```{r,eval = FALSE}
+rbind() ## 添加行
+cbind() ## 添加列 
+```
+
+
+## 长数据变宽数据
+
+```{r}
+table2
+```
+
+## 长数据变宽数据{#myImagePage2}
+
+
+![](pic/tidy3.png)
+
+##  长数据变宽数据
+使用`spread`命令，变量名key来自什么，取值value来自于什么
+```{r}
+spread(table2, key = type, value = count)
+```
+
+## 其他数据整理命令
+数值分裂`seperate`
+
+数值合并`unite`
+
+
+# 变量管理
+
+## 使用`dplyr`进行变量处理
+- `filter()`: 筛选案例
+- `select()`: 筛选变量 
+- `rename()`: 变量重命名
+- `arrange()`: 案例排序 
+- `mutate()`: 增加新变量
+- `transmute()`:依据变量创建新数据框
+- `sample_n()` / `sample_frac()`: 随机选择案例
+- `summarise()`: 汇总变量
+
+## `dplyr` 规则
+
+- 第一个参数是数据框
+- 接下来说做什么
+- 总是返回数据框 
+- 避免
+
+## 筛选个案 `filter()`
+
+- 选择案例（行）
+- 能同时设定多个筛选条件
+
+##筛选个案 `filter()` 
+
+选出Durham的案例
+
+```{r}
+bike %>%
+  filter(County == "Durham")
+```
+
+## 筛选个案`filter()` 
+
+选出Durham国且车龄 < 10 的案例
+
+```{r}
+bike %>%
+  filter(County == "Durham", Bike_Age < 10)
+```
+
+## R中常用的逻辑比较符号 
+
+operator    | definition
+------------|--------------------------
+`<`         | 小于
+`<=`        |	小于等于
+`>`         | 大于
+`>=`        |	大于等于
+`==`        |	等于
+`!=`        |	不等于
+`x | y`     | `x` 或 `y`
+`x & y`     | `x` 和 `y`
+
+##  R中常用的逻辑比较符 
+
+operator     | definition
+-------------|--------------------------
+`is.na(x)`   | 检查 `x` 为 `NA`
+`!is.na(x)`  | 检查 `x` 不是 `NA`
+`x %in% y`   | 检查 `x` 包含于 `y`
+`!(x %in% y)`| 检查 `x` 不包含于 `y`
+`!x`         | 非 `x`
+
+## 注意: 实际数据可能很乱! 
+
+<div class="question">
+`BikeAge_gr` 中`10-Jun` or `15-Nov` 是什么意思?
+</div>
+
+```{r}
+bike %>%
+  group_by(BikeAge_Gr) %>%
+  summarise(crash_count = n())
+```
+
+## 数据分析第一步是清理数据!
+
+- 清理这个文本数据
+    + `10-Jun` 应该为 `6-10`
+    + `15-Nov` 应该为 `11-15`
+  
+- 可以使用R包: `stringr`
+```{r eval=FALSE}
+install.packages(stringr) # 只需做一次
+```
+
+- 加载:
+```{r}
+library(stringr)
+```
+了解更多https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html
+
+## `str_replace()` 替换、 `mutate()`创建新变量 
+
+- 我们要对 `BikeAge_Gr` 做如下处理
+    + `10-Jun` should be `6-10`
+    + `15-Nov` should be `11-15`
+
+```{r}
+bike <- bike %>%
+  mutate(BikeAge_Gr = str_replace(BikeAge_Gr, "10-Jun", "6-10")) %>%
+  mutate(BikeAge_Gr = str_replace(BikeAge_Gr, "15-Nov", "11-15"))
+```
+
+- 替换操作时应该尤其小心!
+    + 但只要我们没有将改变存进原始数据，就可以重来。
+
+## 检查一下，再继续 
+
+在数据梳理过程中要不断检验相关处理是不是你计划做的
+
+```{r}
+bike %>%
+  group_by(BikeAge_Gr) %>%
+  summarise(count = n())
+```
+
+## `slice()` 取一瓢饮 
+
+头五条
+```{r}
+bike %>%
+  slice(1:5)
+```
+
+## `slice()` 取一瓢饮 
+
+最后五条
+```{r}
+last_row <- nrow(bike)
+bike %>%
+  slice((last_row-4):last_row)
+```
+
+
+## `sample_n()` or `sample_frac()`随机挑选案例 
+
+- `sample_n()`: 随机选5个案例
+```{r}
+bike_n5 <- bike %>%
+  sample_n(5, replace = FALSE)
+dim(bike_n5)
+```
+
+- `sample_frac()`: 随机选20%案例
+```{r}
+bike_perc20 <-bike %>%
+  sample_frac(0.2, replace = FALSE)
+dim(bike_perc20)
+```
+
+## 选择变量`select()`
+
+```{r}
+bike %>%
+  select(Crash_Loc, Hit_Run) %>%
+  table()
+```
+
+## 删除变量 `select()`
+
+```{r}
+bike %>%
+  select(-OBJECTID)
+```
+
+##重命名 `rename()`  
+
+修改输入错误、缩短、修改变量名
+
+- 原变量名:
+```{r}
+names(bike)
+```
+
+- 将`Speed_Limi` 改为`Speed_Limit`:
+```{r}
+bike <- bike %>%
+  rename(Speed_Limit = Speed_Limi)
+```
+
+## 检查 
+
+检查确认
+
+```{r}
+names(bike)
+```
+
+## `summarise()` 汇总-结果存为一个新数据 
+
+```{r}
+bike %>%
+  group_by(BikeAge_Gr) %>%
+  summarise(crash_count = n()) %>%
+  arrange(crash_count)
+```
+
+##  `arrange()` 排序观察案例 
+
+```{r}
+bike %>%
+  group_by(BikeAge_Gr) %>%
+  summarise(crash_count = n()) %>%
+  arrange(desc(crash_count))
+```
+
+## 创建变量`mutate`
+
+```{r}
+cgss2003<- cgss2003 %>% 
+  mutate(age = 2003 - birth) 
+
+age_s <- cgss2003%>%
+  filter(age<200) %>%
+summarize(
+    min = min(age, na.rm = TRUE),
+    q1 = quantile(age, 0.25, na.rm = TRUE),
+    median = quantile(age, 0.5, na.rm = TRUE),
+    q3 = quantile(age, 0.75, na.rm = TRUE),
+    max = max(age, na.rm = TRUE),
+    mean = mean(age, na.rm = TRUE),
+    sd = sd(age, na.rm = TRUE),
+    missing = sum(is.na(age))
+  )
+```
+## 描述age
+```{r,message=FALSE,warning=FALSE}
+library(knitr)
+kable(age_s)
+```
+
+
+
+
+
