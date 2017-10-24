@@ -1,5 +1,5 @@
 ---
-title: "备砖：<br> 用R进行数据管理"
+title: "备砖：<br> 用R进行数据管理1"
 author: "李丁"
 date: "2017年10月10日"
 output:
@@ -12,7 +12,7 @@ output:
 ## 内容提纲
 
 - 数据导入 Data import
-    + 文本数据
+    + csv数据
     + SPSS数据
     + stata数据
     + sas数据
@@ -21,18 +21,9 @@ output:
     + 理想的数据结构
     + 宽数据变长数据:gather
     + 长数据变宽数据:spread
-    + 数据的合并
-
-## 内容提纲
-
-- 变量管理 Data wrangling with `dplyr`
-    + 选择变量：select
-    + 选择案例：filter
-    + 创建变量：mutate
-    + 重新编码：recode
-    + 排序变量：rearrange
-    + 分组汇总：group by & summarize
-
+    + 数据的合并:merge & join
+    
+- 变量管理(待续) 
 
 # 数据读入
 
@@ -171,7 +162,6 @@ ggplot(cgss2003, aes(x=sitetype)) +
   scale_x_discrete(drop=TRUE)
 ```
 </div>
-
 
 
 ## 如何使用label信息:1-使用sjPlot包分析
@@ -395,8 +385,136 @@ table4b %>%
   gather(`1999`, `2000`, key = "year", value = "population")
 ```
 
+## 长数据变宽数据
 
-## 两个数据合并
+```{r}
+table2
+```
+
+##  长数据变宽数据
+使用`spread`命令，变量名key来自什么，取值value来自于什么
+```{r}
+spread(table2, key = type, value = count)
+```
+
+## 长数据变宽数据{#myImagePage2}
+
+![](pic/tidy3.png)
+
+
+## reshape 命令：Make a Panel Dataset
+```{r}
+# Make a Panel Dataset
+health <- data.frame(id = rep(1:10, each = 4, len = 40),
+                     trial = rep(c(1:4), 10), 
+                     score = rnorm(40, 3, .75))
+health[1:10, ]
+```
+
+## reshape 命令：Long --> Wide
+```{r}
+# Reshape : Long --> Wide
+health_wide <- reshape(health, v.names = "score", idvar = "id", 
+                       timevar = "trial", direction = "wide") 
+health_wide[1:5, ]
+head(reshape(health_wide)) # to go back to long format
+```
+
+## reshape 命令：Wide --> Long
+```{r}
+# Reshape : Wide --> Long
+health_long <- reshape(health_wide, idvar = "id", direction = "long")         
+health_long[1:15, ] 
+```
+
+## tidy方式：变宽(练习)
+```{r,eval=FALSE}
+spread(health, key = ?, value = ?) # key is the identifier
+```
+
+## tidy方式：变长(练习)
+```{r,eval=FALSE}
+# can also reference by column number(2:5)
+gather(health_wide, key = ?, value = ?, score.1:score.4) 
+```
+
+## 其他数据整理命令
+数值分裂：`seperate`
+
+数值合并：`unite`
+
+具体参考：http://r4ds.had.co.nz/tidy-data.html#separating-and-uniting
+
+
+## 数据变形中的缺失值问题
+长宽变换得到的数据为齐整的数据，如果原始数据中某些记录或者变量缺乏取值怎么办呢？
+
+- 显性缺失 Explicitly, i.e. flagged with NA.
+- 隐性缺失 Implicitly, i.e. simply not present in the data.
+
+具体参考：http://r4ds.had.co.nz/tidy-data.html#missing-values-3
+
+# 数据合并
+
+## 数据合并:创建示例数据
+```{r}
+# 创建两个数据
+data1 <- data.frame(id = rep(1:5, 3), year = rep(2000:2002, each = 5), 
+                     group = sample(c("A", "B", "C"), 15, replace = TRUE))
+
+data2 <- data.frame(id = rep(1:5, each = 4), year = rep(2000:2003, 5),
+                    score = rnorm(20, 50, 15)) 
+
+```
+<div class=columns-2>
+```{r}
+head(data1)
+```
+
+
+```{r}
+head(data2)
+```
+
+</div>
+
+## 数据合并:base包merge命令
+```{r}
+# Merge them by id & year, 1:1 merge
+data_merge <- merge(data1, data2, by = c("id", "year")) 
+data_merge
+
+```
+## 数据合并:base包merge命令
+```{r}
+# 只有一个数据集中有则合并数据集中有.
+# left-merge: x.all=TRUE. right-merge:y.all=TRUE
+data_merge <- merge(data1, data2, by = c("id", "year"), all = TRUE) 
+data_merge
+
+```
+
+扩展阅读: "http://guides.nyu.edu/quant/merge"
+
+## 两个数据合并:dplyr包命令
+```{r}
+inner_merge <- data1 %>% inner_join(data2, by = c("id", "year")) %>% arrange(id)
+outer_merge <- data1 %>% full_join(data2, by = c("id", "year")) %>% arrange(id)
+```
+<div class=columns-2>
+```{r}
+head(inner_merge)
+```
+
+
+```{r}
+head(outer_merge)
+```
+
+</div>
+
+
+## 两个数据合并:前面的示例数据
 
 ```{r}
 tidy4a <- table4a %>% 
@@ -406,269 +524,15 @@ tidy4b <- table4b %>%
 left_join(tidy4a, tidy4b)
 ```
 
+## 数据的合并:基础命令 
+dataframe的合并
 ```{r,eval = FALSE}
 rbind() ## 添加行
 cbind() ## 添加列 
 ```
 
 
-## 长数据变宽数据
-
-```{r}
-table2
-```
-
-## 长数据变宽数据{#myImagePage2}
-
-
-![](pic/tidy3.png)
-
-##  长数据变宽数据
-使用`spread`命令，变量名key来自什么，取值value来自于什么
-```{r}
-spread(table2, key = type, value = count)
-```
-
-## 其他数据整理命令
-数值分裂`seperate`
-
-数值合并`unite`
-
-
-# 变量管理
-
-## 使用`dplyr`进行变量处理
-- `filter()`: 筛选案例
-- `select()`: 筛选变量 
-- `rename()`: 变量重命名
-- `arrange()`: 案例排序 
-- `mutate()`: 增加新变量
-- `transmute()`:依据变量创建新数据框
-- `sample_n()` / `sample_frac()`: 随机选择案例
-- `summarise()`: 汇总变量
-
-## `dplyr` 规则
-
-- 第一个参数是数据框
-- 接下来说做什么
-- 总是返回数据框 
-- 避免
-
-## 筛选个案 `filter()`
-
-- 选择案例（行）
-- 能同时设定多个筛选条件
-
-##筛选个案 `filter()` 
-
-选出Durham的案例
-
-```{r}
-bike %>%
-  filter(County == "Durham")
-```
-
-## 筛选个案`filter()` 
-
-选出Durham国且车龄 < 10 的案例
-
-```{r}
-bike %>%
-  filter(County == "Durham", Bike_Age < 10)
-```
-
-## R中常用的逻辑比较符号 
-
-operator    | definition
-------------|--------------------------
-`<`         | 小于
-`<=`        |	小于等于
-`>`         | 大于
-`>=`        |	大于等于
-`==`        |	等于
-`!=`        |	不等于
-`x | y`     | `x` 或 `y`
-`x & y`     | `x` 和 `y`
-
-##  R中常用的逻辑比较符 
-
-operator     | definition
--------------|--------------------------
-`is.na(x)`   | 检查 `x` 为 `NA`
-`!is.na(x)`  | 检查 `x` 不是 `NA`
-`x %in% y`   | 检查 `x` 包含于 `y`
-`!(x %in% y)`| 检查 `x` 不包含于 `y`
-`!x`         | 非 `x`
-
-## 注意: 实际数据可能很乱! 
-
-<div class="question">
-`BikeAge_gr` 中`10-Jun` or `15-Nov` 是什么意思?
-</div>
-
-```{r}
-bike %>%
-  group_by(BikeAge_Gr) %>%
-  summarise(crash_count = n())
-```
-
-## 数据分析第一步是清理数据!
-
-- 清理这个文本数据
-    + `10-Jun` 应该为 `6-10`
-    + `15-Nov` 应该为 `11-15`
-  
-- 可以使用R包: `stringr`
-```{r eval=FALSE}
-install.packages(stringr) # 只需做一次
-```
-
-- 加载:
-```{r}
-library(stringr)
-```
-了解更多https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html
-
-## `str_replace()` 替换、 `mutate()`创建新变量 
-
-- 我们要对 `BikeAge_Gr` 做如下处理
-    + `10-Jun` should be `6-10`
-    + `15-Nov` should be `11-15`
-
-```{r}
-bike <- bike %>%
-  mutate(BikeAge_Gr = str_replace(BikeAge_Gr, "10-Jun", "6-10")) %>%
-  mutate(BikeAge_Gr = str_replace(BikeAge_Gr, "15-Nov", "11-15"))
-```
-
-- 替换操作时应该尤其小心!
-    + 但只要我们没有将改变存进原始数据，就可以重来。
-
-## 检查一下，再继续 
-
-在数据梳理过程中要不断检验相关处理是不是你计划做的
-
-```{r}
-bike %>%
-  group_by(BikeAge_Gr) %>%
-  summarise(count = n())
-```
-
-## `slice()` 取一瓢饮 
-
-头五条
-```{r}
-bike %>%
-  slice(1:5)
-```
-
-## `slice()` 取一瓢饮 
-
-最后五条
-```{r}
-last_row <- nrow(bike)
-bike %>%
-  slice((last_row-4):last_row)
-```
-
-
-## `sample_n()` or `sample_frac()`随机挑选案例 
-
-- `sample_n()`: 随机选5个案例
-```{r}
-bike_n5 <- bike %>%
-  sample_n(5, replace = FALSE)
-dim(bike_n5)
-```
-
-- `sample_frac()`: 随机选20%案例
-```{r}
-bike_perc20 <-bike %>%
-  sample_frac(0.2, replace = FALSE)
-dim(bike_perc20)
-```
-
-## 选择变量`select()`
-
-```{r}
-bike %>%
-  select(Crash_Loc, Hit_Run) %>%
-  table()
-```
-
-## 删除变量 `select()`
-
-```{r}
-bike %>%
-  select(-OBJECTID)
-```
-
-##重命名 `rename()`  
-
-修改输入错误、缩短、修改变量名
-
-- 原变量名:
-```{r}
-names(bike)
-```
-
-- 将`Speed_Limi` 改为`Speed_Limit`:
-```{r}
-bike <- bike %>%
-  rename(Speed_Limit = Speed_Limi)
-```
-
-## 检查 
-
-检查确认
-
-```{r}
-names(bike)
-```
-
-## `summarise()` 汇总-结果存为一个新数据 
-
-```{r}
-bike %>%
-  group_by(BikeAge_Gr) %>%
-  summarise(crash_count = n()) %>%
-  arrange(crash_count)
-```
-
-##  `arrange()` 排序观察案例 
-
-```{r}
-bike %>%
-  group_by(BikeAge_Gr) %>%
-  summarise(crash_count = n()) %>%
-  arrange(desc(crash_count))
-```
-
-## 创建变量`mutate`
-
-```{r}
-#cgss2003 <- read_sav("CGSS2003b.sav")
-age_s <- cgss2003%>%
-    mutate(age = 2003 - birth) %>%
-summarize(
-    min = min(age, na.rm = TRUE),
-    q1 = quantile(age, 0.25, na.rm = TRUE),
-    median = quantile(age, 0.5, na.rm = TRUE),
-    q3 = quantile(age, 0.75, na.rm = TRUE),
-    max = max(age, na.rm = TRUE),
-    mean = mean(age, na.rm = TRUE),
-    sd = sd(age, na.rm = TRUE),
-    missing = sum(is.na(age))
-  )
-```
-## 描述age
-```{r,message=FALSE,warning=FALSE}
-library(knitr)
-kable(age_s)
-```
-
 ##  作业1-1 github的使用
-
 
 - 注册github账号并在自己的电脑上安装github客户端。
 - 在https://github.com/lidingruc/2017R上选择用github desktop打开文件，从而将老师课件复制到本地。

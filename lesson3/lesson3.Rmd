@@ -9,27 +9,18 @@ output:
 
 ---
 
-## 基础入门 
+## 课程大纲 
 
-摘要：讲解Ｒ的基本操作知识，了解Ｒ的特点、资源获取方式，并掌握基本的程序编写
-
-* R语言是什么
-* R和Rstudio的界面和基本操作
+* R语言的特征
+* R工作界面介绍
+* R的基础设定
+* R的基础操作
+* 
 * R数据分析的例子
 * R的学习方式与资料
 
 
-# R 语言的介绍
-
-## R 的下载和安装
-
-- [R的官方网站](http://www.r-project.org)
-- [RStudio开发环境](http://www.rstudio.com)
-- 扩展包的安装和加载
-    - `install.packages("tidyverse")`
-    - `library(tidyverse)`
-- 安装扩展包相当于将某个工具买回来了；加载相当于带在身上了。
-
+# R 语言的特征
 
 ## 什么是 R
 
@@ -45,13 +36,13 @@ output:
 ## R 语言的特点
 
 - 开源和免费
-- 功能强大且扩展性强
+- 功能强大且扩展性强（需要一定基础）
 - 与其它软件的交互能力强
 - 各类前沿的数据分析建模方法
 - 实现可重复性(Reproducible)分析
 - 适用于多操作系统的轻量化平台
-- 编程简单
-- 更新快速且文档完备
+- 编程简单(学习曲线比较陡)
+- 更新快速且文档完备(需要适应)
 
 
 ## R 的整合能力 
@@ -65,14 +56,36 @@ output:
 ## R 可以做什么？ 
 
 - 统计计算与绘图（学术界）
-- 金融分析
-- 生命科学
-- 互联网数据挖掘
-- 社会化网络分析和可视化
+- 数据爬取
+- 文本分析
+- 空间分析
+- 网络分析
 - [task views](http://mirrors.ustc.edu.cn/CRAN/web/views/)
 
 
 # R工作界面介绍
+
+## R 的下载和安装
+
+- [R的官方网站](http://www.r-project.org)
+- [RStudio开发环境](http://www.rstudio.com)
+- 扩展包的安装和加载
+    - `install.packages("tidyverse")`
+    - `library(tidyverse)`
+- 安装扩展包相当于将某个工具买回来了；加载相当于带在身上了。
+
+## R 的启动设置
+
+改变默认语言(建议设定为英文)
+
+- (win)修改R安装目录下`etc\Rconsole`文件，`language = en`
+- (linux)在用户主目录中增加文件`.Renviron`，`LANGUAGE=en`
+- (Mac) 在终端中输入 defaults write org.R-project.R force.LANG en_US.UTF-8 即可
+
+查询当前工作目录`getwd()`
+改变默认工作目录 `setwd("D:/work")`
+
+注意Mac与Windows电脑路径表达差异
 
 ## R与Rstudio的关系
 ```{r, echo=FALSE,out.width = "1000px"}
@@ -105,29 +118,136 @@ knitr::include_graphics("pic/Rpane.png")
 knitr::include_graphics("pic/Rstudio2.png")
 ```
 
-## R 的启动设置
-
-改变默认语言(建议设定为英文)
-
-- (win)修改R安装目录下`etc\Rconsole`文件，`language = en`
-- (linux)在用户主目录中增加文件`.Renviron`，`LANGUAGE=en`
-- (Mac) 在终端中输入 defaults write org.R-project.R force.LANG en_US.UTF-8 即可
-
-查询当前工作目录`getwd()`
-改变默认工作目录 `setwd("D:/work")`
-
-注意Mac与Windows电脑路径表达差异
-
 ## R和Rstudio、Rmarkdown的进一步学习
 Chester Ismay
 
 [Getting used to R, RStudio, and R Markdown](https://bookdown.org/chesterismay/rbasics/)
 
-# R数据分析例子：预期寿命与GDP
 
-## 预期寿命与经济发展的关系
+# 演示时间<br> 基础设定、安装包、<br>交互编程、创建文件、打开文件
 
-呈现全球国家的预期寿命(life expectancy)和人均GDP(GDP per capita)之间的关系. Hans Rosling曾经做个一个[TED](https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen#t-1174047)演讲。我们只做一个年份的。
+## 打开文件为乱码的情况
+通过菜单file->reopen with encoding,简体中文通常可尝试选择gb2312解决
+
+
+
+# 演示时间<br>通过Rscript<br>进行数据分析与结果呈现
+
+
+# 演示时间<br>使用Rmarkdown<br>进行数据分析与结果呈现
+
+## 创建Rmd文件：菜单操作 {#myImagePage}
+![](pic/rmarkdown.png)
+
+## 创建Rmd文件：设定输出文件格式 {#myImagePage}
+![](pic/rmdtype.png)
+
+## Rmd文件的结果
+自动生成的模板文件已经设定了头部yaml
+
+简单的文本和代码以及相关操作说明。
+
+通过cmd+op+I插入代码。
+
+
+## R Markdown 简单语法
+
+- 简单的标记语法（记得带空格）
+  - \#表示一级标题；##二级标题 ###三级标题
+  - -号或+号或*号表示列表
+  - 数字加英文句号表示数字列表
+  - []加() 链接
+  - ![]加()插入图片
+  - 前后两个*表示加粗
+  - 前后一个*表示斜体
+  - >表示引用
+  - 兼容html语法和CSS设定
+**技巧：**可以将一个[语法手册](https://www.rstudio.com/resources/cheatsheets/)放在手边，随时参考 .
+
+## Rmd 代码块参数设置
+1. include=FALSE
+代码可以执行，报告(html、word)中不出现代码和结果，但是运行的结果存在workspace中，可以直接调用
+2. echo = FALSE
+执行代码，打印结果，但是不打印代码~即最终报告中出现的结果，没有代码
+3. message = FALSE 
+执行代码，打印代码，不打印结果
+4. warning = FALSE
+执行代码，不打印出warning的信息
+5. fig.cap = "..."
+输出图形结果时添加标题
+6.fig.width / fig.height设定输出图大小
+
+## Rmd文件的编译 {#myImagePage}
+编辑完成之后可以通过Rstudio上的Knit按钮进行转码打印
+![](pic/knit.png)
+
+
+# Rmarkdown示例<br>预期寿命与人均GDP关系
+
+## 数据分析任务
+呈现全球国家的预期寿命(life expectancy)和人均GDP(GDP per capita)之间的关系. Hans Rosling曾经做个一个[TED演讲](https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen#t-1174047)。
+
+
+## 第一步: 创建文件并加载必要的包（packages）
+
+- 下面将使用 `dplyr`包 (用于数据处理 data wrangling) 和
+`ggplot2` (用于作图，visualization) .
+
+- 首先要确保这些包都安装了（installed）.
+
+- 在markdown中加载（Load）这些包:
+
+```{r message=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+## 第二步: 导入数据
+
+```{r}
+# gapminder <- read.csv("https://stat.duke.edu/~mc301/data/gapminder.csv")
+# setwd("/Users/liding/E/Bdata/liding17/2017R/lesson3/")
+gapminder <- read.csv("gapminder.csv")
+```
+
+## 第三步: 筛选数据
+
+- 以`gapminder` 数据集（dataset）开始
+
+- 选择年份（year）变量等于2007的案例
+
+- 将筛选出来的案例存到一个新的数据集`gap07`
+
+```{r}
+gap07 <- gapminder %>%
+  filter(year == 2007)
+```
+
+## 第四步: 探索和可视化（Explore and visualize）
+
+**任务:** 呈现 `gdpPercap` 与`lifeExp`之间的关系.
+
+```{r, fig.height=4, fig.width=7}
+qplot(x = gdpPercap, y = lifeExp, data = gap07)
+```
+
+## 第五步: 深入分析1
+
+**任务:** 各个大陆的点使用不同的颜色.
+
+```{r, fig.height=4, fig.width=7}
+qplot(x = gdpPercap, y = lifeExp, color = continent, data = gap07)
+```
+
+## 第五步: 深入分析2
+
+**任务:** 在设定点的大小与人口规模成正比.
+
+```{r, fig.height=4, fig.width=7}
+qplot(x = gdpPercap, y = lifeExp, color = continent, size = pop,data = gap07)
+```
+
+## 创建动态图的命令
 ```{r eval= FALSE,message=FALSE}
 #library(dplyr)
 library(gganimate)
@@ -144,13 +264,13 @@ gapminder_plot <- ggplot(gapminder) +
 gganimate(gapminder_plot, convert='gm convert', filename = "gapminder-gganimate.gif")
 ```
 
-## 预期寿命与经济发展的关系
+## 动态图结果
 ```{r, echo=FALSE,out.width = "500px"}
 knitr::include_graphics("pic/gapminder-gganimate.gif")
 ```
 
 
-# R数据分析例子：川普支持度
+# R数据分析例子2<br>川普支持度(不讲)
 
 ## 了解数据源
 
@@ -226,21 +346,14 @@ ggplot(data,aes(dnum, approve, color=who)) +
 ```
 
 
-##关于 piping and layering的说明
-
-- 管道操作符 `%>%` 是`dplyr`中的函数. 将管道的上端的结果作为下一行命令的首个输入元素.
-
-- `ggplot2` 中的 `+` 符号可以不断给图形添加图层(layer)
-
-
 # R的学习方法与资料
 
 ## 学习 R 的方法
 
-- 适时做笔记,以记下一些重点或技巧
-- 学习时亲手键入代码，修改，理解其意义
-- 坚持练习,尝试利用身边的数据进行应用分析
-- 以tidyverse的风格进入
+- 适时做笔记,以记下一些重点或技巧（在原文件中加入批注的形式）。
+- 学习时亲手键入代码，修改，理解其意义。
+- 坚持练习,尝试利用身边的数据进行应用分析。
+
 
 ## 如何得到帮助
 
@@ -254,61 +367,64 @@ ggplot(data,aes(dnum, approve, color=who)) +
 - `vignette()`	列出当前已安装包中所有可用的vignette文档
 - `vignette("foo")`为主题foo显示指定的vignette文档
 
+##为什么教大家tidyerse
 
-## 学习 R 的资源（网络）
+- 管道操作符 `%>%` 是Stefan Milton Bache and Hadley Wickham在`magrittr`中首创的.
 
-- [R语言官方站](http://www.r-project.org/)
-- [R-blogger](http://www.r-bloggers.com/)
-- [R语言期刊](http://journal.r-project.org/current.html)
-- [R语言搜索引擎](http://www.rseek.org/)
-- [R函数在线帮助](http://www.rdocumentation.org/)
-- [关于R的问答网站](http://stackoverflow.com/questions/tagged/r)
-- [统计之都](http://cos.name/)
-- [中国R语言会议](http://china-r.org)
-- [美国计算机世界杂志提供的Ｒ语言初学者入门资料](http://www.computerworld.com/s/article/9239625/Beginner_s_guide_to_R_Introduction)
-- [Rmarkdown撰写的书籍](https://bookdown.org/home/)
+- 将上一段命令的结果作为下一行命令的首个默认输入元素，从而可以：
 
+    + 可以节省大量的代码
+    + 代码可读性大大提高
+    + 解释中间存储的对象，让工作空间更简洁
+    + 已经做了大量的优化
 
-## 学习 R 的资源（书籍）
+- [David Robinson的解释为什么要像R的初学者教授tidyverse](http://varianceexplained.org/r/teach-tidyverse/)
 
-初学入门：
+- [lynda上的视频解释](https://www.lynda.com/R-tutorials/Why-use-tidyverse/586672/648975-4.html)
 
-  - 《R in Action》（R语言实战）
-  - 《The Art of R Programming》
-
-tidyverse风格入门：
-
-  - [《R for Data Science》]( http://r4ds.had.co.nz/)
-  - [《 An Introduction to Statistical and Data Sciences via R》](http://moderndive.com/)
-
-进阶内容：
-
-  - 《A Handbook of Statistical Analyses_Using_R》
-  - 《Modern Applied Statistics With S》
-  - 《Data Mining with R: Learning with Case Studies》
-  - 《An Introduction to Statistical Learning》
+- [其他解释](https://www.r-bloggers.com/what-is-the-tidyverse/)
 
 
-## 学习 R 的资源（书籍）
+## 为什么教大家tidyverse{#myImagePage2}
 
-数据绘图：
+- 教学中会对照tidyverse与R基础语言，但以tidyverse为主。
+- 现在已经由Rstudio维护:质量、一致性、可持续性、扩展性有保证！
+![](pic/tidy.png)
 
-  - 《ggplot2 Elegant Graphics for Data Analysis》
 
-参考手册：
+## 参考资料
 
-  - [《R Cookbook》](http://www.cookbook-r.com/)
-  - 《R in a Nutshell》
++ 教材
+    - [《R for Data Science》]( http://r4ds.had.co.nz/)
+    - [《 An Introduction to Statistical and Data Sciences via R》](http://moderndive.com/)
+    - [《R for Data Science》习题答案](https://jrnold.github.io/e4qf/)
 
-高级编程：
++ 其他资料
 
-  - 《R Programming for Bioinformatics》
-  - 《software for data analysis programming with R》
+- tidydata简介: http://www.jstatsoft.org/v59/i10/paper
 
-## 课后阅读
+- tidyverse的学习网址:https://www.tidyverse.org/learn/
 
-阅读tidydata的介绍
-http://www.jstatsoft.org/v59/i10/paper
+- Rmarkdown撰写的书籍:https://bookdown.org/home/
+
+
+##  R基础语法练习
+
+- 肖凯90分钟视频：http://www.xueqing.tv/course/1
+- 纽约大学R基础入门:https://guides.nyu.edu/r
+- 斯坦福R基础入门:https://sejdemyr.github.io/r-tutorials/statistics/
+- 尤达学院探索性数据分析入门课程（推荐）：https://classroom.udacity.com/courses/ud651
+
+##  交互测试练习网页
+- 初级课程 : https://www.datacamp.com/courses/free-introduction-to-r
+    + [1](https://campus.datacamp.com/courses/free-introduction-to-r/chapter-1-intro-to-basics-1?ex=1)
+    + [2](https://campus.datacamp.com/courses/free-introduction-to-r/chapter-2-vectors-2?ex=1)
+    + [4](https://campus.datacamp.com/courses/free-introduction-to-r/chapter-4-factors-4?ex=1)
+    + [5](https://campus.datacamp.com/courses/free-introduction-to-r/chapter-5-data-frames?ex=1)
+- 中级课程: https://www.datacamp.com/courses/intermediate-r
+    + [1](https://campus.datacamp.com/courses/intermediate-r/chapter-1-conditionals-and-control-flow?ex=1)
+    + [3](https://campus.datacamp.com/courses/intermediate-r/chapter-3-functions?ex=1)
+
 
 ## {.flexbox .vcenter .nobackground}
 
