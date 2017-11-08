@@ -488,11 +488,23 @@ ggplot(mpg, aes(x = factor(1), fill = factor(class))) +
   geom_bar(width = 1)+ 
   coord_polar(theta = "y")
 
+# 结构连续变化图
+setwd("/Users/liding/E/Bdata/liding17/2017R/lesson7")
+data <- read.csv('soft_impact.csv',T)
+head(data)
+#data.melt <- gather(data,key =prog )
+library(reshape2)
+data.melt <- melt(data,id='Year')
+
+ggplot(data.melt,aes(x=Year,y=value,
+                     group=variable,fill=variable))+
+  geom_area(color='black',size=0.3,
+            position=position_fill())+
+  scale_fill_brewer()
 
 ## 直方图
 ggplot(data=iris,aes(x=Sepal.Length))+ 
   geom_histogram()
-
 
 ggplot(iris,aes(x=Sepal.Length))+ 
   geom_histogram(binwidth=0.1,   # 设置组距
@@ -519,21 +531,6 @@ ggplot(iris,aes(x=Sepal.Length)) +
 ggplot(iris,aes(x=Sepal.Length,fill=Species)) +
   geom_density(alpha=0.5,color='gray')
 
-# 结构连续变化图
-setwd("/Users/liding/E/Bdata/liding17/2017R/lesson7")
-data <- read.csv('soft_impact.csv',T)
-head(data)
-
-#data.melt <- gather(data,key =prog )
-
-library(reshape2)
-data.melt <- melt(data,id='Year')
-
-p <- ggplot(data.melt,aes(x=Year,y=value,
-                          group=variable,fill=variable))+
-  geom_area(color='black',size=0.3,
-            position=position_fill())+
-  scale_fill_brewer()
 
 
 #箱子图-分类
