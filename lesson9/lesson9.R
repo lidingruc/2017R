@@ -132,11 +132,25 @@ view_df(cgss2013[,550:577], show.frq = TRUE, show.prc = TRUE)
 # -------------------------------------------
 # -- 二. 假设检验 Hypothesis Testing --
 # ------------------------------------------- 
-
+############
 # A、Chi-square Test, small difference
-chisq.test(cgss2013$a2, cgss2013$a7a)
+chisq.test(cgss2013$a7a,cgss2013$a2)
 summary(table(cgss2013$a2, cgss2013$a7a))
 
+# expected cell 
+chisq.test(cgss2013$a7a,cgss2013$a2)$expected
+
+# 标准化偏差，评估单元格影响
+chisq.test(cgss2013$a7a,cgss2013$a2)$resid
+
+# 二手列联表分析
+observed <- matrix(c(32, 24, 265, 199, 391, 287),nrow = 3, byrow = T)
+observed
+chisq.test(observed, correct = F)
+cbind(observed, chisq.test(observed)$expected)
+cbind(observed, chisq.test(observed)$resid)
+
+############
 # B、t-test
 
 # One sample t test
@@ -152,9 +166,39 @@ summary(tResults)
 tResults$statistic
 tResults['statistic']
 
+# 原理示例
+# 假定方差相等，假定正太分布，检验均值相等假设
+cholest <- data.frame(chol = c(245, 170, 180,190, 200, 210, 220, 230, 240, 250, 260, 185,205, 160, 170, 180, 190, 200, 210, 165), gender = rep(c("female","male"), c(12, 8)))
+str(cholest)
+cholest 
+boxplot(chol ~ gender, cholest, ylab = "Cholesterol Score")
+
+# 正态分布？
+par(mfrow = c(1, 2))
+qqnorm(cholest$chol[cholest$gender == "male"],
+       main = "QQNorm for the Males")
+
+qqnorm(cholest$chol[cholest$gender == "female"],
+       main = "QQNorm for the Females")
+
+# 方差相等
+var.test(chol ~ gender, cholest)
+
+# 均值相等 
+t.test(chol ~ gender, cholest)
+
 ############
 #C、anova
-aov_inc <- aov(a8a ~ a7a + a2, data = cgss2013)
+par(family="STKaiti")
+boxplot(a8a~a7a,data=cgss2013)
+
+edu_inc <- cgss2013 %>% group_by(a7a) %>%
+  summarize(meaninc = mean(a8a, na.rm = TRUE)) 
+
+ggplot(edu_inc,aes(x=a7a,y=meaninc)) +
+  geom_bar(stat = "identity")
+
+aov_inc <- aov(a8a ~ a7a , data = cgss2013)
 summary(aov_inc)
 aov_inc 
 plot(aov_inc)
@@ -172,7 +216,11 @@ aov(a8a ~ a3a * a2, data = cgss2013)
 #可以使用lm模型来做，提取其中的方差分析部分即可
 #见下面的例子
 
-#D、 Linear Regression Model
+# F检验的临界值，4自由度，50个案例
+qf(0.95, 4, 45)
+
+############
+#D、回归分析 Linear Regression Model
 
 ?lm
 ?predict.lm
