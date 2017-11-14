@@ -185,6 +185,7 @@ boxplot(sugars ~ shelf, data = UScereal, horizontal = TRUE)
 # Q: Is the relationship between Variable X and Y different across categories of Variable Z?
 
 plot(calories ~ sugars, data = UScereal, col = shelf)
+
 legend('topright', inset = .05, legend = c(3,2,1),
        fill = c('green', 'red', 'black'))
 
@@ -206,6 +207,7 @@ plot(calories ~ sugars, data = UScereal, ylab = 'Calories',
 # 方法2 使用title function添加标题元素
 # 此时plot中设定 ann=FALSE 抑制原轴标题
 # Turn off axes and annotations (axis labels)
+
 plot(calories ~ sugars, data = UScereal, ann = FALSE)
 title(main = 'Nutrition of a Single Cup of Cereal', ylab = 'Calories',
       xlab = 'Sugars (grams)') # add afterwards
@@ -214,7 +216,7 @@ title(main = 'Nutrition of a Single Cup of Cereal', ylab = 'Calories',
 # 2、修改图例 legend
 # 在plot后使用legend function
 plot(calories ~ sugars, data = UScereal, col = shelf)
-legend('topright', inset = .05, legend = c(3,2,1),
+legend('topleft', inset = .05, legend = c(3,2,1),
        fill = c('green', 'red', 'black'))
 
 #########################
@@ -231,6 +233,7 @@ legend('topright', inset = .05, legend = c(3,2,1),
 
 # Use a palette of defined colors
 palette(c('#e5f5f9', '#99d8c9', '#2ca25f'))
+
 plot(calories ~ sugars, data = UScereal, pch = 19, col = shelf, bg = shelf)
 legend('topright', inset = .05, legend = c(3,2,1),
        fill = c('#e5f5f9', '#99d8c9', '#2ca25f'))
@@ -241,7 +244,7 @@ plot(calories ~ sugars, data = UScereal, pch = shelf,col=shelf)
 #如何还原默认颜色序列呢？
 ?palette  ## 如何查看帮助讲解1
 palette("default")
-plot(calories ~ sugars, data = UScereal, pch = shelf,col=shelf)
+plot(calories ~ sugars, data = UScereal, col=shelf)
 
 #########################
 # 3、给点加标签 Label points
@@ -261,17 +264,18 @@ text(UScereal$sugars, UScereal$calories, UScereal$mfr, col = "blue", pos = 2)
 plot(calories ~ sugars, data = UScereal, pch = 19)
 
 outliers <- UScereal[which(UScereal$calories > 300),]
+
 text(outliers$sugars, outliers$calories - 15, labels = row.names(outliers))
 
 
 #（2）. 交互式选点-不太好选(windows可能好一点)
 plot(calories ~ sugars, data = UScereal, pch = 19)
+
 identify(UScereal$carbo, UScereal$calories, n = 2, labels = row.names(UScereal))     
 
 
 #（3）. 修改axis limits to remove outliers from view
 plot(calories ~ sugars, data = UScereal, pch = 19, ylim = c(0, 325))
-
 
 ########################
 # 4.修改图形元素大小(text size, point size, label size etc..)
@@ -296,6 +300,7 @@ boxplot(calories ~ shelf, data = UScereal)
 hist(UScereal$calories, breaks = 15)
 boxplot(sugars ~ shelf, data = UScereal)
 hist(UScereal$sugars, breaks = 15)
+
 # 保存图片
 dev.print(png,file="file1.png",width=480,height=640)
 
@@ -345,7 +350,6 @@ title(ylab="Total", col.lab=rgb(0,0.5,0))
 legend(1, g_range[2], c("cars","trucks"), cex=0.8, 
        col=c("blue","red"), pch=21:22, lty=1:2)
 
-
 # ----------------------------------------------
 # - 三 利用ggplot2作图 -
 # ----------------------------------------------
@@ -366,9 +370,10 @@ library(ggplot2)
 
 # 1、quick plot function
 # 散点图
-qplot(income, prestige, 
+qplot(income,prestige, 
       xlab="Average Income", ylab="Prestige Score",
       geom=c("point", "smooth"), data=car::Prestige)
+
 # 分色散点图
 qplot(x = sugars, y = calories, color = as.factor(shelf),
       data = UScereal) 
@@ -378,17 +383,25 @@ qplot(cty,hwy,
       data=mpg,
       geom=c("point", "smooth"))
 
+# 分面
+qplot(hwy,data=mpg,binwidth=0.5) +
+  scale_x_continuous(breaks =10:45) +
+  facet_wrap(~ drv, ncol = 1)
+
 #2、ggplot function函数+ 图层
+
 # ggplot(data = <DATA>) + 
 #   <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
 
 p1 <- ggplot(UScereal)
+
 p <- p1 + geom_histogram(aes(x = calories)) 
 print(p)
 summary(p)  ## 查看p的内部结构  两层内容
 
 ggplot(UScereal)+ 
   geom_histogram(aes(x = calories)) 
+
 
 ###################################################
 # B. 图层 Layers 
@@ -404,7 +417,9 @@ p1 + geom_histogram(binwidth = 10)
 
 
 # 可以添加多个图层
-p1 + geom_histogram(binwidth = 10) + xlab('Calories in a Single Cup') +
+p1 + 
+  geom_histogram(binwidth = 10) +
+  xlab('Calories in a Single Cup') +
   ylab('Frequency') + 
   ggtitle('Distribution of Calories in US Cereals') + theme_bw()
 
@@ -437,6 +452,7 @@ p2  + geom_point() + geom_line()
 #基础条形图
 p <- ggplot(mpg,aes(x=class))+
   geom_bar()
+
 print(p)
 # 按频次排序，方法1
 ggplot(mpg,
@@ -466,7 +482,6 @@ ggplot(fdata,aes(x=reorder(class,-count),y=count)) +
   geom_bar(stat = "identity")
 
 
-
 mpg$year <- factor(mpg$year)
 
 #频数叠加条形图
@@ -492,15 +507,19 @@ ggplot(mpg, aes(x = factor(1), fill = factor(class))) +
 setwd("/Users/liding/E/Bdata/liding17/2017R/lesson7")
 data <- read.csv('soft_impact.csv',T)
 head(data)
-#data.melt <- gather(data,key =prog )
-library(reshape2)
-data.melt <- melt(data,id='Year')
+library(tidyr)
+data.melt <- gather(data,key=variable,value=value,-Year )
+
+#用reshape2命令进行数据整理
+#library(reshape2)
+#data.melt <- melt(data,id='Year')
 
 ggplot(data.melt,aes(x=Year,y=value,
                      group=variable,fill=variable))+
   geom_area(color='black',size=0.3,
             position=position_fill())+
   scale_fill_brewer()
+
 
 ## 直方图
 ggplot(data=iris,aes(x=Sepal.Length))+ 
@@ -547,6 +566,7 @@ ggplot(iris,aes(x=Species,y=Sepal.Length,
                      fill=Species)) +
   geom_violin(fill='gray',alpha=0.5)+
   geom_dotplot(binaxis = "y", stackdir = "center")
+
 
 ###################################################
 # D. 选择和修改美学特征
