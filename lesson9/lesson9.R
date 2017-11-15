@@ -358,6 +358,7 @@ qnorm(c(0.025, 0.975)) # p = .05, two-tailed
 
 
 # -------------------------------------------
+# R统计入门课程资料：http://www.stat.wmich.edu/~hzz3534/stat2600s1/
 # 分类汇总的其他方法，参考肖凯
 #http://www.xueqing.tv/lesson/4
 #http://www.xueqing.tv/lesson/5
