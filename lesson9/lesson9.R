@@ -15,9 +15,12 @@ if (!require(sjPlot))install.packages('sjPlot')
 if (!require(sjmisc))install.packages('sjmisc')
 if (!require(haven)) install.packages('haven')
 
+
 # -------------------------------------------
 # --读入数据并进行了预处理
 # -------------------------------------------
+library(haven)
+library(tidyverse)
 setwd("/Users/liding/E/Bdata/liding17/2017R/lesson9/")
 cgss2013 <- read_spss("cgss2013.sav") 
 
@@ -69,7 +72,7 @@ cgss2013 %>%
 summary(cgss2013) 
 summary(cgss2013$a8a)
 
-# A. Continuous variable : birth year
+# A. Continuous variable : income
 mean(cgss2013$a8a, na.rm = TRUE)
 median(cgss2013$a8a, na.rm = TRUE)
 sd(cgss2013$a8a, na.rm = TRUE)
@@ -80,6 +83,8 @@ quantile(cgss2013$a8a, na.rm = TRUE)
 table(cgss2013$a2)
 prop.table(table(cgss2013$a2))
 prop.table(table(cgss2013$a7a))
+
+as.data.frame(prop.table(table(cgss2013$a7a)))
 
 # 交叉表
 table(cgss2013$a7a,cgss2013$a2)  
@@ -105,8 +110,8 @@ plot(cgss2013$a8a,cgss2013$a8b)
 
 
 #D、使用SJ系列包输出spss样式的输出结果
-#library(sjPlot)
-#library(sjmisc)
+library(sjPlot)
+library(sjmisc)
 
 #简单统计表 默认带上基本统计
 sjt.frq(cgss2013$a7a)
@@ -121,7 +126,7 @@ sjt.xtab(cgss2013$a7a,cgss2013$a2,
          show.obs = TRUE, show.cell.prc = FALSE, show.col.prc = TRUE)
 
 # 图
-sjp.xtab(cgss2013$a10,cgss2013$a2, type ="bar", margin ="row",
+sjp.xtab(cgss2013$a2,cgss2013$a10, type ="bar", margin ="row",
          bar.pos = "stack")
 
 #查看数据集中因子变量的标签与频数信息
@@ -138,6 +143,8 @@ chisq.test(cgss2013$a7a,cgss2013$a2)
 summary(table(cgss2013$a2, cgss2013$a7a))
 
 # expected cell 
+ch01 <- chisq.test(cgss2013$a7a,cgss2013$a2)
+ch01$residuals
 chisq.test(cgss2013$a7a,cgss2013$a2)$expected
 
 # 标准化偏差，评估单元格影响
@@ -146,6 +153,7 @@ chisq.test(cgss2013$a7a,cgss2013$a2)$resid
 # 二手列联表分析
 observed <- matrix(c(32, 24, 265, 199, 391, 287),nrow = 3, byrow = T)
 observed
+
 chisq.test(observed, correct = F)
 cbind(observed, chisq.test(observed)$expected)
 cbind(observed, chisq.test(observed)$resid)
@@ -159,6 +167,7 @@ t.test(cgss2013$a8a, mu=25000,alternative ='less')
 
 # Independent 2 group t test where y is numeric and x is a binary factor
 t.test(a8a ~ a2, data = cgss2013)
+
 # Paired t test
 t.test(cgss2013$a8a, cgss2013$a8b, paired = TRUE) 
 tResults <- t.test(cgss2013$a8a, cgss2013$a8b, paired = TRUE) 
@@ -190,6 +199,7 @@ t.test(chol ~ gender, cholest)
 ############
 #C、anova
 par(family="STKaiti")
+par(mfrow = c(1, 1))
 boxplot(a8a~a7a,data=cgss2013)
 
 edu_inc <- cgss2013 %>% group_by(a7a) %>%
@@ -202,6 +212,8 @@ aov_inc <- aov(a8a ~ a7a , data = cgss2013)
 summary(aov_inc)
 aov_inc 
 plot(aov_inc)
+
+TukeyHSD(aov_inc)
 
 ##交互效应的表示方式
 fit <- aov(a8a ~ a7a + a2 + a7a:a2, data = cgss2013)
