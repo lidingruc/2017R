@@ -3,7 +3,7 @@
 #一、简单描述性统计、列联表、相关。
 #二、介绍T检验和方差分析
 #三、介绍回归分析及其原理
-
+#四、Rstudio提供的统计原理互动资料https://www.rstudio.com/products/shiny/shiny-user-showcase/
 # -------------------------------------------
 # --加载必要的包
 # -------------------------------------------
@@ -23,6 +23,7 @@ library(haven)
 library(tidyverse)
 setwd("/Users/liding/E/Bdata/liding17/2017R/lesson9/")
 cgss2013 <- read_spss("cgss2013.sav") 
+# cgss2013 <- read_stata("/Users/liding/DATA/CGSS/2003-2013/2013/cgss2013_14.dta")
 
 #定义一个函数方便查看数据集中的变量和变量标签
 des <- function (dfile) {
@@ -60,10 +61,11 @@ cgss2013[w]<- lapply(cgss2013[w], function(x) as.numeric(as.character(x)))
 
 #原来的函数是转为数值class(cgss2013[w]) <- c("numeric")
 
+dim(cgss2013)
 
 sjPlot::sjp.setTheme(theme.font ='STXihei' )
 cgss2013 %>%
-  select(s5a) %>% sjPlot::sjplot(fun="frq")
+  select(a10) %>% sjPlot::sjplot(fun="frq")
 
 
 # -------------------------------------------
