@@ -17,7 +17,6 @@ library(modelr)
 
 options(na.action = na.warn)
 
-
 # The goal of a model is to provide a simple low-dimensional summary of a dataset.
 
 # -------------------------------------------
@@ -36,7 +35,8 @@ models <- tibble(
 
 ggplot(sim1, aes(x, y)) + 
   geom_abline(aes(intercept = a1, slope = a2), data = models, alpha = 1/4) +
-  geom_point() 
+  geom_point() +
+  geom_box()
 
 # 拟合情况示意图
 dist1 <- sim1 %>% 
@@ -80,6 +80,7 @@ ggplot(sim1, aes(x, y)) +
     aes(intercept = a1, slope = a2, colour = -dist), 
     data = filter(models, rank(dist) <= 10)
   )
+
 # 这些系数在全部系数散点中的位置
 ggplot(models, aes(a1, a2)) +
   geom_point(data = filter(models, rank(dist) <= 10), size = 4, colour = "red") +
@@ -120,13 +121,15 @@ ggplot(sim1, aes(x, y)) +
 sim1_mod <- lm(y ~ x, data = sim1)
 coef(sim1_mod)
 
+summary(sim1_mod)
 
 # -------------------------------------------
 # --回归结果作图
 # -------------------------------------------
 # 拟合直线
+
 grid <- sim1 %>% 
-  data_grid(x) 
+  modelr::data_grid(x) 
 grid
 
 grid <- grid %>% 
@@ -136,6 +139,7 @@ grid
 ggplot(sim1, aes(x)) +
   geom_point(aes(y = y)) +
   geom_line(aes(y = pred), data = grid, colour = "red", size = 1)
+
 
 # 残差
 sim1 <- sim1 %>% 
@@ -166,6 +170,7 @@ grid <- sim2 %>%
   data_grid(x) %>% 
   add_predictions(mod2)
 grid
+
 ggplot(sim2, aes(x)) + 
   geom_point(aes(y = y)) +
   geom_point(data = grid, aes(y = pred), colour = "red", size = 4)
@@ -173,6 +178,7 @@ ggplot(sim2, aes(x)) +
 #不存在的level不能计算估计值
 tibble(x = "e") %>% 
   add_predictions(mod2)
+
 
 # -------------------------------------------
 # --交互效应 Interactions (continuous and categorical)
@@ -183,6 +189,7 @@ ggplot(sim3, aes(x1, y)) +
 # 构建两个模型（可加模型、交互模型）
 mod1 <- lm(y ~ x1 + x2, data = sim3)
 mod2 <- lm(y ~ x1 * x2, data = sim3)
+#mod2 <- lm(y ~ x1 + x2 + x1:x2, data = sim3)
 
 #产生预测数据，作图 
 grid <- sim3 %>% 
@@ -309,6 +316,7 @@ stats::glm()
 
 # 稳健线性模型：对残差进行加权处理，避免极端案例影响
 MASS:rlm()
+
 
 
 # -------------------------------------------
@@ -451,6 +459,7 @@ abline(wlsmodel$coefficients,lty=3)
 # --CGSS2003的例子
 # -------------------------------------------
 # 读入数据并进行预处理
+
 setwd("/Users/liding/E/Bdata/liding17/2017R/lesson9/")
 cgss2013 <- read_spss("cgss2013.sav") 
 # cgss2013 <- read_stata("/Users/liding/DATA/CGSS/2003-2013/2013/cgss2013_14.dta")
@@ -485,9 +494,11 @@ cgss2013 <- sjlabelled::drop_labels(cgss2013)
 #将还有取值标签的变量转为因子，无取值标签的变量仍然为labelled类型
 cgss2013 <- sjmisc::to_label(cgss2013) 
 
-#将剩余的labelled变量，都转化为普通数值变量
+#将剩余的labelled变量都转化为普通数值变量
 w <- which(sapply(cgss2013, class) == 'labelled')
-cgss2013[w]<- lapply(cgss2013[w], function(x) as.numeric(as.character(x)))
+
+cgss2013[w]<- lapply(cgss2013[w], 
+                     function(x) as.numeric(as.character(x)))
 
 cgss2013 <- cgss2013 %>%
 mutate(edu = fct_collapse(a7a,
@@ -496,9 +507,16 @@ mutate(edu = fct_collapse(a7a,
          "高中"=c("职业高中","普通高中","中专"),
           "大学"=c("大学专科(成人高等教育)","大学专科(正规高等教育)","大学本科(成人高等教育)","大学本科(正规高等教育)","研究生以上")))
 
+# ggplot 作图
+ggplot(data=na.omit(cgss2013[,c("edu","a8a")]),aes(x=edu,y=a8a))+
+  geom_boxplot() +
+  theme(text=element_text(family="STKaiti"))+
+  labs(x="教育水平",y="年收入")
 
 #回归分析
 lm_inc <- lm(a8a ~ I(2013-a3a) + a2, data = cgss2013)
+
+
 
 # 查看结果
 summary(lm_inc)
