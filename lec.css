@@ -37,7 +37,10 @@
 pre {
   margin-bottom: 0px;
 }
-
+#myImagePage0 img {
+  width: 95%;
+  height: 95%;
+}
 #myImagePage img {
   width: 60%;
   height: 60%;

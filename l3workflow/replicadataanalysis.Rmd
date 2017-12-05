@@ -1,0 +1,373 @@
+---
+title: "用R和Github <br> 进行可复现性数据分析"
+author: "李丁 社会与人口学院"
+date: "2017年10月12日"
+output:
+  ioslides_presentation:
+    highlight: pygments
+    widescreen: yes
+    css: ../lec.css
+---
+## 内容提纲
+
+- 为什么要关心可复现性问题
+- 如何使用Github客户端
+- 如何在Rtudio中使用Git
+- 如何使用Rmarkdown
+
+
+本PPT部分页面在Dr. Çetinkaya-Rundel的[课件](https://github.com/mine-cetinkaya-rundel/sta112_f15)第二讲PPT基础上修改而成。
+
+
+# 为什么要重视可复现性问题(Reproducibility)?
+
+## 《Science》 不经LaCour同意撤稿
+
+- In May 2015 Science retracted a study of how canvassers can sway 
+people's opinions about gay marriage published just 5 months ago.
+
+- Science Editor-in-Chief Marcia McNutt: Original survey data not made 
+available for independent reproduction of results. + Survey incentives 
+misrepresented. + Sponsorship statement false.
+
+- Two Berkeley grad students who attempted to replicate the study 
+quickly discovered that the data must have been faked.
+
+- Methods we'll discuss today can't prevent this, but they can make it 
+easier to discover issues.
+
+Source: http://news.sciencemag.org/policy/2015/05/science-retracts-gay-marriage-paper-without-lead-author-s-consent
+
+
+## 《Seizure study》在作者要求下撤稿
+
+From the authors of **Low Dose Lidocaine for Refractory Seizures in 
+Preterm Neonates**:
+
+*"The article has been retracted at the request of the authors. After 
+carefully re-examining the data presented in the article, they identified 
+that data of two different hospitals got terribly mixed. The published 
+results cannot be reproduced in accordance with scientific and clinical 
+correctness."*
+
+Source: http://retractionwatch.com/2013/02/01/seizure-study-retracted-after-authors-realize-data-got-terribly-mixed/
+
+
+## 数据表合并错误差点让文章被毙
+
+- The authors informed the journal that the merge of lab results and other 
+survey data used in the paper resulted in an error regarding the 
+identification codes. Results of the analyses were based on the data set 
+in which this error occurred. Further analyses established the results 
+reported in this manuscript and interpretation of the data are not correct.
+
+- **Original conclusion:** Lower levels of CSF IL-6 were associated with 
+current depression and with future depression [...].
+
+- **Revised conclusion:** Higher levels of CSF IL-6 and IL-8 were 
+associated with current depression [...].
+
+Source: http://retractionwatch.com/2014/07/01/bad-spreadsheet-merge-kills-depression-paper-quick-fix-resurrects-it/
+
+# 如何实现可复现性
+
+## 如何推广可复现性研究
+
+\#1 
+说服研究者 to adopt a reproducible research workflow
+
+\#2
+训练新手 who don’t have any other workflow
+
+![](pic/two-pronged-fork.jpg)
+
+
+## 数据分析的可复现性
+
+- 用代码完成数据分析： R
+
+- 让代码可读性提高：R Markdown
+
+- 版本控制： Git / GitHub
+
+## 代码的可读性与文化学编程
+
+**Donald Knuth "Literate Programming (1983)"**
+
+"Let us change our traditional attitude to the construction of programs: 
+Instead of imagining that our main task is to instruct a *computer- what 
+to do, let us concentrate rather on explaining to *human beings- what we 
+want a computer to do."
+
+- These ideas have been around for years!
+- and tools for putting them to practice have also been around
+- but they have never been as accessible as the current tools
+
+
+## 可复现性分析中需要注意的项目
+
+- Are the tables and figures reproducible from the code and data?
+- Does the code actually do what you think it does?
+- In addition to what was done, is it clear **why** it was done? 
+(e.g., how were parameter settings chosen?)
+- Can the code be used for other data?
+- Can you extend the code to do other things?
+
+
+## 工具箱(Toolkit)
+
+<center>
+![](pic/toolkit.png)
+</center>
+
+# Github客户端的使用
+
+
+## 注册和安装客户端
+- 首先，注册GitHub账户 https://github.com/
+- 其次，下载Github桌面版 https://desktop.github.com
+
+选择windows或者mac版本。
+
+![](pic/downgithub.png)
+
+## 登录客户端
+
+安装成功后，登录本地客户端。
+
+![](pic/login.png)
+
+## 创建版本库(repository)
+在客户端创建一个版本库，取好名字，并选择好本地存放路径。
+
+![](pic/creat.png)
+
+## 创建版本库{#myImagePage}
+![](pic/creatfile.gif)
+
+## 在本地文件夹里创建内容{#myImagePage}
+右键版本库，在文件夹中打开。
+
+然后可以在里面创建文件，或者将已经准备好的文件拖到里面。
+
+![](pic/putfilein.gif)
+
+## 确定并记录修改
+通过commit可以将已经做了的修改记录下来.
+
+确定时可以加上一些简短的说明，自己做了些什么修改。
+
+![](pic/commit.png)
+
+
+## 回到某个历史版本
+经过确认的修改，随时可以回退。
+
+![](pic/version.png)
+
+## 将内容提交到服务器{#myImagePage}
+commit之后，修改只是保存在了缓存库里面。
+
+你可以通过publish的方式，提交服务器远端库，与别人进行分享。
+
+![](pic/push.gif)
+
+## 将修改更新到服务器
+每次修改后，你都可以commit，然后通过更新将修改的内容同步到远端服务器！
+
+你也可以回退看以往保存的版本。
+
+如果有重大的版本调整，你可以新建一个库（文件夹）重新开始。
+
+![](pic/syn.png)
+
+##  在网页上查看发布的版本
+登录你的github页面对应的库之后，你就可以看到你更新或发布的内容了。
+
+![](pic/viewfile.png)
+
+
+
+# 在R中使用Github
+
+## 将远端库克隆到本地 {#myImagePage}
+
+- 进入RStudio : File -> New Project 选择 Version Control再选择Git 
+![](pic/np.png)
+ 
+## 克隆一个远端库
+- 填写一些基本信息:
+    - URL: 你的Git版本库的HTTPS地址
+    - project directory name: 可以创建一个本地文件夹
+    - Create as a subdirectory of: 选择上述文件夹放在本地的路径
+    
+- 注意: 每个任务或者项目可创建一个版本库，分别放在一定的文件夹中.
+
+## 在Rstudio中修改复现的文件
+找到上述版本库所存储的本地路径。
+
+如果是R相关的文件，你可以用Rstudio打开，进行修改编辑。
+
+
+## 在Rstudio中确认修改并上传
+
+- 选择：Stage
+
+- 确认：Commit (可添加简要说明)
+
+- 上传：Push（需要用到你的账号和密码）
+
+![](pic/gitc.png)
+
+## 冲突的合并
+
+- 在GitHub的web端你可以编辑README文件并且`Commit` ，写上简单的描述.
+
+- 之后, 在RStudio中编辑README文件，但改的地方不同，并确定修改。
+
+    - 上传本地版本：Try to push -- 会出现错误警报!
+    - 下载线上版本：Try pulling
+    - 解决冲突：Resolve the merge conflict and then commit and push
+    
+- 小组合作时常常出现merge conflicts, 知道如何处理非常重要.
+
+## 小结：Git的原理
+![](pic/gitmodel2.jpg)
+
+## 小结：Git的原理{#myImagePage}
+![](pic/gitmodel.png)
+
+[图片来源](http://www.cnblogs.com/schaepher/p/5561193.html)
+
+
+## 小结：Git的原理
+- workspace 即工作区，逻辑上是本地计算机，还没添加到repository的状态；
+- staging 即版本库中的stage，是暂存区。修改已经添加进repository，但还没有作为commit提交，类似于缓存；
+- Local repository 即版本库中master那个地方。到这一步才算是成功生成一个新版本；
+- Remote repository 则是远程仓库。用来将本地仓库上传到网络，可以用于备份、共享、合作。
+
+
+# 如何使用Rmarkdown
+
+## 创建Rmd文件：菜单操作 {#myImagePage}
+![](pic/rmarkdown.png)
+
+## 创建Rmd文件：设定输出文件格式 {#myImagePage}
+![](pic/rmdtype.png)
+
+## Rmd文件编辑
+自动生成的模板文件已经设定了头部yaml
+简单的文本和代码，以及相关操作说明.通过cmd+op+I插入代码。
+
+
+
+## R Markdown 简单语法
+
+- 简单的标记语法（记得带空格）
+  - \#表示一级标题；##二级标题 ###三级标题
+  - -号或+号或*号表示列表
+  - 数字加英文句号表示数字列表
+  - []加() 链接
+  - ![]加()插入图片
+  - 前后两个*表示加粗
+  - 前后一个*表示斜体
+  - >表示引用
+  - 兼容html语法和CSS设定
+**技巧：**可以将一个[语法手册](https://www.rstudio.com/resources/cheatsheets/)放在手边，随时参考 .
+
+## Rmd 代码块参数设置
+1. include=FALSE
+代码可以执行，报告(html、word)中不出现代码和结果，但是运行的结果存在workspace中，可以直接调用
+2. echo = FALSE
+执行代码，打印结果，但是不打印代码~即最终报告中出现的结果，没有代码
+3. message = FALSE 
+执行代码，打印代码，不打印结果
+4. warning = FALSE
+执行代码，不打印出warning的信息
+5. fig.cap = "..."
+输出图形结果时添加标题
+6.fig.width / fig.height设定输出图大小
+
+## Rmd文件的编译 {#myImagePage}
+编辑完成之后可以通过Rstudio上的Knit按钮进行转码打印
+![](pic/knit.png)
+
+# Rmarkdown 使用方法演示
+
+## 数据分析任务
+呈现全球国家的预期寿命(life expectancy)和人均GDP(GDP per capita)之间的关系. Hans Rosling曾经做个一个[TED演讲](https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen#t-1174047)。
+
+## 第一步: 创建文件并加载必要的包（packages）
+
+- 下面将使用 `dplyr`包 (用于数据处理 data wrangling) 和
+`ggplot2` (用于作图，visualization) .
+
+- 首先要确保这些包都安装了（installed）.
+
+- 在markdown中加载（Load）这些包:
+
+```{r message=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+## 第二步: 导入数据
+
+```{r}
+gapminder <- read.csv("https://stat.duke.edu/~mc301/data/gapminder.csv")
+```
+
+## 第三步: 筛选数据
+
+- 以`gapminder` 数据集（dataset）开始
+
+- 选择年份（year）变量等于2007的案例
+
+- 将筛选出来的案例存到一个新的数据集`gap07`
+
+```{r}
+gap07 <- gapminder %>%
+  filter(year == 2007)
+```
+
+## 第四步: 探索和可视化（Explore and visualize）
+
+**任务:** 呈现 `gdpPercap` 与`lifeExp`之间的关系.
+
+```{r, fig.height=4, fig.width=7}
+qplot(x = gdpPercap, y = lifeExp, data = gap07)
+```
+
+## 第五步: 深入分析1
+
+**任务:** 各个大陆的点使用不同的颜色.
+
+```{r, fig.height=4, fig.width=7}
+qplot(x = gdpPercap, y = lifeExp, color = continent, data = gap07)
+```
+
+## 第五步: 深入分析2
+
+**任务:** 在设定点的大小与人口规模成正比.
+
+```{r, fig.height=4, fig.width=7}
+qplot(x = gdpPercap, y = lifeExp, color = continent, size = pop,data = gap07)
+```
+
+## 自己动手试试？
+
+如果我们选择1952年的数据进行做一些分析呢？
+
+- 选择 1952 的 数据
+
+- 绘制预期寿命 (`lifeExp`) 与人口的散点图(`pop`)
+
+- 点的大小与人均GDP (`gpdPercap`)成正比
+
+- 提示：在code适当位置添加 `size = gpdPercap` 
+
+## 延伸阅读：
+Chester Ismay
+
+[Getting used to R, RStudio, and R Markdown](https://bookdown.org/chesterismay/rbasics/)第五章、第四章。
+
