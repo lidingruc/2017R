@@ -44,7 +44,7 @@ library(spgwr)        ## GWR
 
 ## Set working directory (if you already downloaded the files)
 
-setwd("/Users/liding/E/Bdata/Course/7Space/zhukov")	## Mac
+setwd("/Users/liding/E/Bdata/liding17/2017R/l12spa/intro")	## Mac
 # setwd("C:\\") 					## Windows               
 load("Datasets.RData")
 ls()

@@ -30,7 +30,6 @@
 #  7. Interactive JS Networks with visNetwork
 #  8. Interactive and dynamic networks with ndtv-d3
 #  9. Plotting networks on a geographic map
-#
 
 
 # LIBRARIES
