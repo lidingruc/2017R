@@ -2,7 +2,7 @@
 # You may cite these labs as follows: McFarland, Daniel, Solomon Messing,
 # Mike Nowak, and Sean Westwood. 2010. "Social Network Analysis          
 # Labs in R." Stanford University.  
-# Modified by liding RUC
+# Modified by liding RUC at 2017年12月
 ##########################################################################
  
  
