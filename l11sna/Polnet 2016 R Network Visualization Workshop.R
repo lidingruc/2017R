@@ -904,9 +904,9 @@ library("igraph")
 # an additional software called ImageMagick from imagemagick.org 
 # If you don't already have it, skip this part of the tutorial for now.
 
-ani.options("convert") # Check that the package knows where to find ImageMagick
-ani.options(convert="C:/Program Files/ImageMagick-6.8.8-Q16/convert.exe") 
- 
+ani.options("gm convert") # Check that the package knows where to find ImageMagick
+# ani.options(convert="C:/Program Files/ImageMagick-6.8.8-Q16/convert.exe") 
+
 # You can use this technique to create various (not necessarily network-related)
 # animations in R by generating multiple plots and combining them in an animated GIF.
 
@@ -926,7 +926,7 @@ saveGIF( {  col <- rep("grey40", vcount(net))
             step.3 <- unlist(neighborhood(net, 2, step.1, mode="out"))
             col[setdiff(step.3, step.2)] <- "#FFDD1F"
             plot(net, vertex.color=col, layout=l)  },
-          interval = .8, movie.name="network_animation.gif" )
+          interval = .8, movie.name="network_animation.gif",convert='gm convert' )
 
  detach("package:igraph")
  detach("package:animation")
