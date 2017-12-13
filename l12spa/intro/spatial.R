@@ -2,8 +2,35 @@
 #### Applied Spatial Statistics in R ####
 #### Yuri M. Zhukov                  ####
 #### 20 January 2010                 ####
+#### modified by liding RUC          ####
+#### 13 December 2017                ####
 #########################################
 #http://www.people.fas.harvard.edu/~zhukov/spatial.html
+
+# section1:
+#1.1 point data 
+#1.2 polygon data
+#1.3 grid data
+#1.4 data management
+
+# section2:
+#2.1 Distance Conversion
+#2.2 Spatial Autocorrelation
+
+# section3:
+# Spatial Weights   
+
+# section4:
+# Point Pattern Analysis   
+
+# section5:
+# Geostatistics 
+
+# section6:
+#6.1 Spatial Autologistic Model  
+#6.2 GWR
+#6.3 Spatial Regression 
+
 ## Clear the workspace
 
 rm(list=ls())
@@ -59,7 +86,7 @@ ls()
 
 ## If loading from URL fails...
 
-download.file(url="http://www.people.fas.harvard.edu/~zhukov/Datasets.RData",dest="/Users/yurizhukov/Desktop/Datasets.RData")
+#download.file(url="http://www.people.fas.harvard.edu/~zhukov/Datasets.RData",dest="/Users/yurizhukov/Desktop/Datasets.RData")
 load("Datasets.RData")
 ls()
 
@@ -349,7 +376,7 @@ dev.off()
 ## What if you have some date you'd like to merge with a map?
 
 
-## Download data (if you haven't done so already)
+## 下载数据(if you haven't done so already)
 
 url1 <- "http://www.people.fas.harvard.edu/~zhukov/world.shp"
 url2 <- "http://www.people.fas.harvard.edu/~zhukov/world.shx"
@@ -366,7 +393,9 @@ download.file(url2,dest2)
 download.file(url3,dest3)
 download.file(url4,dest4)
 
-#setwd("/Users/yurizhukov/Desktop/")
+
+
+setwd("/Users/liding/E/Bdata/liding17/2017R/l12spa/intro")
 
 
 ## Let's open a world map Shapefile

@@ -219,7 +219,6 @@ krack_full_data_frame <- data.frame(ego = advice_data_frame[,1],
 	reports_to_tie = reports_to_data_frame[,3])
 head(krack_full_data_frame)
  
- 
 # Now let's move on to some data processing.
  
 # Reduce to non-zero edges so that the edge list only contains
@@ -227,7 +226,8 @@ head(krack_full_data_frame)
 krack_full_nonzero_edges <- subset(krack_full_data_frame, 
 	(advice_tie > 0 | friendship_tie > 0 | reports_to_tie > 0))
 head(krack_full_nonzero_edges)
- 
+
+
 # Now we can import our data into a "graph" object using igraph's 
 # graph.data.frame() function. Coercing the data into a graph
 # object is what allows us to perform network-analysis techniques.
@@ -336,6 +336,7 @@ krack_advice_only <- igraph::delete.edges(krack_full,
     E(krack_full)[igraph::get.edge.attribute(krack_full,
     name = "advice_tie") == 0])
 summary(krack_advice_only)
+
 pdf("1.2_Krackhardt_Advice.pdf")
 plot(krack_advice_only)
 dev.off()
@@ -345,6 +346,7 @@ krack_friendship_only <- igraph::delete.edges(krack_full,
     E(krack_full)[igraph::get.edge.attribute(krack_full, 
     name = "friendship_tie") == 0])
 summary(krack_friendship_only)
+
 pdf("1.3_Krackhardt_Friendship.pdf")
 plot(krack_friendship_only)
 dev.off()
@@ -354,6 +356,7 @@ krack_reports_to_only <- igraph::delete.edges(krack_full,
     E(krack_full)[igraph::get.edge.attribute(krack_full, 
     name = "reports_to_tie") == 0])
 summary(krack_reports_to_only)
+
 pdf("1.4_Krackhardt_Reports.pdf")
 plot(krack_reports_to_only)
 dev.off()
@@ -368,6 +371,7 @@ dev.off()
 # can be accessed by entering ?layout.
 
 reports_to_layout <- layout.fruchterman.reingold(krack_reports_to_only)
+
 pdf("1.5_Krackhardt_Reports_Fruchterman_Reingold.pdf")
 plot(krack_reports_to_only, 
      layout=reports_to_layout)
@@ -411,6 +415,7 @@ E(krack_full)$color[ E(krack_full)$advice_tie==1 ] = tie_type_colors[1]
 E(krack_full)$color[ E(krack_full)$friendship_tie==1 ] = tie_type_colors[2]
 E(krack_full)$color[ E(krack_full)$reports_to_tie==1 ] = tie_type_colors[3]
 E(krack_full)$arrow.size=.5 
+
 V(krack_full)$color = dept_vertex_colors
 V(krack_full)$frame = dept_vertex_colors
 

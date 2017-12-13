@@ -1,3 +1,5 @@
+# 文本分析主题模型
+
 # 设置文档存储位置
 setwd("/Users/liding/E/Bdata/Course/6TextasData/")
 
@@ -29,6 +31,8 @@ res=gsub(pattern="[我|你|的|了|一下|一个|没有|这样|现在|原告|被告|北京|法院|简称
 res=gsub(pattern="/^[^0-9]*$/","",res); 
 
 # 安装新词典
+# 搜狗 词库 https://pinyin.sogou.com/dict/cate/index/361
+
 #installDict("C:\\SogouDownload\\diming.scel","diming")
 #installDict("C:\\SogouDownload\\xinli.scel","xinli")
 #installDict("C:\\SogouDownload\\zzx.scel","zzx")

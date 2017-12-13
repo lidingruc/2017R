@@ -1,4 +1,5 @@
-# 几个包的安装
+############################
+# 几个包的安装 说明
 # https://stackoverflow.com/questions/37014340/installing-r-package-opennlp-in-r
 #1. Launch R at the command line (To test solution)
 #> sudo R CMD javareconf
@@ -18,12 +19,12 @@
 # 可以下载到本地，网速比较慢
 # 可以尝试将包的源文件下载本地 安装
 
-library(ezdf)
-
 install.packages("rJava", type = "source")
 install.packages("Rwordseg", repos = "http://R-Forge.R-project.org")
 install.packages("tmcn", repos="http://R-Forge.R-project.org")
 install.packages("Rweibo", repos = "http://R-Forge.R-project.org")
+############################
+
 
 library(rJava);  
 library(Rwordseg); 
@@ -32,7 +33,7 @@ library(tmcn);
 # 了解文本资料特征
 # 设置文档存储位置
 
-setwd("/Users/liding/E/Bdata/Course/6TextasData/")
+setwd("/Users/liding/E/Bdata/liding17/2017R/l13text/intro/data")
 a <-"十八大以来，中央在选用干部的思路上强调不搞表面文章、唯才是用、注重实效，布小林此番进步，正因为她是符合实际需要的人选，可谓举贤不避亲。"
 nchar(a) #计算字符串长度
 strsplit(a,split="，") #字符串切割
@@ -142,8 +143,8 @@ segment(words,engine_new_word)
 #segment(words,engine_new_word)
 
 # 停用词
-#engine_s<-worker(stop_word = "stopwords.txt")
-#segment(words,engine_s)
+engine_s<-worker(stop_word = "stopword.txt")
+segment(words,engine_s)
 
 # 词频统计
 freq(segment(words,engine))

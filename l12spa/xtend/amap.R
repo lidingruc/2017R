@@ -188,12 +188,14 @@ if (!require('ggplot2')) install.packages("ggplot2")
 url <- "http://restapi.amap.com/v3/config/district?key=88e5280248b518ac3f7eaec5d6f68183&keywords=原州区&level=city&subdistrict=3&extensions=all"
 json <- getURL(url)
 list <- fromJSON(json)
+
 # 中心点
 center<-list$districts[[1]]$center
 cname<-list$districts[[1]]$name
 cpoint <- as.numeric(unlist(str_split(center , ",")))
-lon <-cpoint[1]  
-lat <-cpoint[2] 
+lon <-cpoint[[1]]  
+lat <-cpoint[[2]] 
+
 cpoint <- data.frame(lon = lon, lat = lat,cname= cname)
 #下属区域
 dist <- list$districts[[1]]$districts[[1]]$districts
@@ -204,6 +206,7 @@ dpoint <- str_split(dpoint , ",")
 lon <- sapply(dpoint, function(x)x[1])
 lat <- sapply(dpoint, function(x)x[2])
 dpoint <- data.frame(lon = lon, lat = lat,dname= dname)
+
 dpoint[, 1:2] <- sapply(dpoint[, 1:2], function(x)as.numeric(as.character(x)))
 
 # 边界线
