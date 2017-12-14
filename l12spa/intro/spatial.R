@@ -77,14 +77,14 @@ load("Datasets.RData")
 ls()
 
 
-## Load directly from URL
+##或者 Load directly from URL
 
 url <- url("http://www.people.fas.harvard.edu/~zhukov/Datasets.RData")
 load(url)
 ls()
 
 
-## If loading from URL fails...
+##或者 If loading from URL fails...
 
 #download.file(url="http://www.people.fas.harvard.edu/~zhukov/Datasets.RData",dest="/Users/yurizhukov/Desktop/Datasets.RData")
 load("Datasets.RData")
@@ -169,7 +169,6 @@ data <- election
 ## Lambert Conformal Conic Projection
 #设定投影系统
 #原来的投影有错误
-
 proj4string(data) <- CRS("+proj=lcc+lon_0=90w +lat_1=20n +lat_2=60n")
 #spTransform
 summary(data)[1:4]
@@ -228,6 +227,7 @@ var <- data$Bush_pct
 #http://proj4.org/projections/index.html
 #proj4string(data) <- CRS("+proj=longlat +datum=WGS84")
 proj4string(data) <- CRS("+proj=lcc")
+
 spplot(data, zcol="Bush_pct", col.regions=br.palette(100), main="Percent of County Vote for Bush (2004)")
 
 dev.off()
@@ -265,6 +265,8 @@ dev.off()
 ## Plot using fixed intervals
 
 cols <- findColours(classes_fx, pal)
+
+par(mfrow=c(1,1))
 
 par(mar=rep(0,4))
 plot(election,col=cols,border=NA)
@@ -394,7 +396,6 @@ download.file(url3,dest3)
 download.file(url4,dest4)
 
 
-
 setwd("/Users/liding/E/Bdata/liding17/2017R/l12spa/intro")
 
 
@@ -427,8 +428,10 @@ names(polity)
  
 m_ccode <- as.data.frame(map)       
 merged <- merge(x=m_ccode, y=polity, by.x="CCODE", by.y="ccode", all.x=T, all.y=F)
+
 merged <- merged[order(merged$MAP_CCODE),]
 rownames(merged) <- map$MAP_CCODE
+
 map2 <- spCbind(map,merged)
 names(map2)
 
