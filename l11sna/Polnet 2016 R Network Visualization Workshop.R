@@ -24,6 +24,10 @@
 #  1. R colors and fonts
 #  2. Reading in the network data
 #  3. Plotting networks with 'igraph' 
+#     3.1  作图参数
+#     3.2  布局
+#     3.3  强调某些方面
+#     3.4  强调特定的点和边
 #  4. Plotting two-mode networks
 #  5. Quick example using 'network' 
 #  6. Simple plot animations in R
@@ -166,27 +170,33 @@ detach("package:RColorBrewer")
 #  ------->> Fonts in R plots --------
 
 # Using different fonts for R plots may take a little bit of work.
-# Especially for Windows - Mac & Linux users may not have to do this.
-# First we'd use the 'extrafont' package to import the fonts from the OS into R:
+# Especially for Windows ， Mac & Linux 电脑不需要.
+# 通过'extrafont' 包导入系统中的字体:
 
 # install.packages("extrafont")
 
 library("extrafont")
 
-# Import system fonts - may take a while, so DO NOT run this during the workshop.
-# font_import() 
-fonts() # See what font families are available to you now.
-#loadfonts(device = "win") # use device = "pdf" for pdf plot output. 
+# Import system fonts - 需要很长时间，暂时不要轻易尝试.
+font_import() 
+fonts() # 查看可用字体.
+# loadfonts(device = "win") # use device = "pdf" for pdf plot output. 
  
-# Now you should be able to do  this:
+# Now you should be able to do  this，mac中可以直接做:
 plot(x=10:1, y=10:1, pch=19, cex=6, main="This is a plot", 
      col="orange", family="Arial Black" )
 
 # To embed the fonts & use them in PDF files:
-# First you may have to let R know where to find ghostscript
-Sys.setenv(R_GSCMD = "C:/Program Files/gs/gs9.10/bin/gswin64c.exe")
+# 首先需要安装ghostscript 
+# mac中的安装方法：http://blog.csdn.net/cloudsben/article/details/8164047
+# win中下载安装方法：https://www.ghostscript.com/download/gsdnld.html
+
+# windows中设定ghostscript让路径R知道位置
+#Sys.setenv(R_GSCMD = "C:/Program Files/gs/gs9.10/bin/gswin64c.exe")
 
 # The command 'pdf' will send all the plots we output before dev.off() to a pdf file: 
+
+loadfonts(device = "pdf") 
 pdf(file="ArialBlack.pdf")
 plot(x=10:1, y=10:1, pch=19, cex=6, main="This is a plot", 
      col="orange", family="Arial Black" )
