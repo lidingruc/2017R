@@ -762,6 +762,7 @@ plot(net2)
 
 # This time we will make nodes look different based on their type.
 # Media outlets are blue squares, audience nodes are orange circles:
+# 这种映射赋值的方法值得留意
 V(net2)$color <- c("steel blue", "orange")[V(net2)$type+1]
 V(net2)$shape <- c("square", "circle")[V(net2)$type+1]
 
@@ -849,8 +850,8 @@ detach("package:igraph")
 # Here is a quick example using the (by now very familiar) media network.
 
 #Just in case we have forgotten this earlier:
-dev.off()
-detach("package:igraph")
+#dev.off()
+#detach("package:igraph")
 
 # Load our main package:
 library("network")

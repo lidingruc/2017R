@@ -169,7 +169,7 @@ data <- election
 ## Lambert Conformal Conic Projection
 #设定投影系统
 #原来的投影有错误
-proj4string(data) <- CRS("+proj=lcc+lon_0=90w +lat_1=20n +lat_2=60n")
+#proj4string(data) <- CRS("+proj=lcc+lon_0=90w +lat_1=20n +lat_2=60n")
 #spTransform
 summary(data)[1:4]
 
@@ -640,7 +640,7 @@ map_crd <- coordinates(map2)
 
 data <- as.data.frame(map2)
 merged <- merge(data, cities[,c(1,4,5)], by.x="MAP_CCODE", by.y="MAP_CCODE", all.x=T, all.y=F)
-merged <- merged[,c(1,41,42)]
+merged <- merged[,c(1,40,41)]
 
 merged <- merged[order(merged$MAP_CCODE),]
 rownames(merged) <- map2$MAP_CCODE
@@ -659,8 +659,9 @@ var <- ifelse(is.na(var)==1,0,var)
 
 
 ## Run Correlogram 
+corD1 <- correlog(map_crd2, var, method="Moran")
 
-corD1 <- correlog(map_crd2, var, method="Moran", nbclass=50)
+corD1 <- correlog(map_crd2, var, method="Moran", nbclass=30)
 corD1
 
 
@@ -840,7 +841,9 @@ dev.off()
 #########
 
 ## Centroids
+map_crd <- coordinates(data)
 W_del <- tri2nb(map_crd)
+require(RANN)
 W_soi <- graph2nb(soi.graph(W_del, map_crd))
 W_soi_mat <- nb2listw(W_soi)
 
@@ -959,11 +962,11 @@ env.r <- envelope(ppp(x=r.x,y=r.y,window=owin(bbox(sp_point)[1,],bbox(sp_point)[
 
 
 GTest <- rbind(env, env.u, env.r)
-GTest <- cbind(GTest, RANDOM=rep(c("Baltimore Data","Random Pattern","Regular Pattern"), each=length(r)))
-
+RANDOM=rep(c("Baltimore Data","Random Pattern","Regular Pattern"), each=length(r))
+GTest <- cbind(GTest, RANDOM)
 
 ## Plot observed vs. theoretical G values
-
+library(lattice)
 xyplot(obs~theo|RANDOM, data=GTest, ylim=c(0,1), xlim=c(0,1), ylab="Observed", xlab="Expected", type="l", main="G Function", panel=function(x, y, subscripts)
 	{
 		lpolygon(c(x, rev(x)), 

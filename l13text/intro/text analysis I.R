@@ -3,9 +3,9 @@
 ## 1、需要下载并安装java
 #   https://www.java.com/en/download/
 #   CMD中查看版本、路径信息
-#   java -version
+#   system("java -version")
 #   $(/usr/libexec/java_home)
-
+readOGR
 ## 2、安装rjava，留意安装的路径: 
 #   install.packages("rJava", type = "source")
 #   如果安装过可以先删除 

@@ -50,6 +50,21 @@ pre {
   height: 45%;
 }
 
+#myImagePage95 img {
+  width: 95%;
+  height: 95%;
+}
+#myImagePage60 img {
+  width: 60%;
+  height: 60%;
+}
+
+#myImagePage45 img {
+  width: 45%;
+  height: 45%;
+}
+
+
 .column-left{
   float: left;
   width: 40%;
