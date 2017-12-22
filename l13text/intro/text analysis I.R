@@ -1,11 +1,15 @@
 ############################
 # Rjava的安装需要
-## 1、需要下载并安装java
+
+## 1、需要下载并安装java，设定好环境变量，注意macOS sierria不能装java jdk9,如果装了，需要卸载（具体见http://www.cnblogs.com/eadwin/p/7656310.html）。
+# 安装及设置环境变量的说明：mac http://www.cnblogs.com/zhangzhangwhu/p/7171735.html windows：
+
+#  
 #   https://www.java.com/en/download/
 #   CMD中查看版本、路径信息
 #   system("java -version")
 #   $(/usr/libexec/java_home)
-readOGR
+
 ## 2、安装rjava，留意安装的路径: 
 #   install.packages("rJava", type = "source")
 #   如果安装过可以先删除 
@@ -156,7 +160,8 @@ write.csv(d, file="samgov2.csv", row.names=FALSE)
 #############################
 # jiebaR 分词
 # http://www.open-open.com/lib/view/open1415086153728.html
-# https://mp.weixin.qq.com/s/PJ5bCtodjxikcSbynEZ8Dw
+# 结巴分词从入门到喜欢https://mp.weixin.qq.com/s/PJ5bCtodjxikcSbynEZ8Dw
+# 
 
 library(jiebaR)
 engine<-worker()

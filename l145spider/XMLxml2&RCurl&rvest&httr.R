@@ -1,17 +1,16 @@
 #######################################
-#网页抓取
-#httr包的功能 类似于python的Requests
-#rvest也是hadley创建，整合了httr的功能
-#能够同时使用XPath和selectr
-#https://r-how.com/packages
-
-#RCurl包是curl在R中的对应，基于C。很快！
+#第一部分：网页抓取
+#httr包类似于python的Requests
+#rvest也是hadley创建整合了httr、xml2，能够同时使用XPath和selectr
+#RCurl包是curl在R中的对应，基于C的基础包。很快！
 #https://r-how.com/packages/httr
 
 ##########################
 #示例1：httr抓取网页
 #########################
+setwd("/Users/liding/E/Bdata/liding17/2017R/l145spider")
 library(httr)
+library(xml2)
 url<-"http://bj.xiaozhu.com/fangzi/5098280314.html"
 html<-GET(url)
 # 查看内容
@@ -25,7 +24,7 @@ doc<-content(html,"raw")
 doc<-content(html,"text")
 cat(doc,file="xiaozhu.html")
 
-#content自带解析功能，采用xml2解析
+#content自带解析功能.采用xml2解析
 doc<-content(html,"parsed")
 #使用xml2中的函数提取
 xml_find_all(doc,"//h4")
@@ -41,18 +40,17 @@ html<-getURL(url)
 #或者xml2的read_xml进行解析
 
 #RCurl还可以进行登录，设置cookies等等
-#见第五讲综合实例课的人人网个人好友网络抓取代码
-
+#见综合实例：人人网个人好友网络抓取代码
 
 #######################################
-#网页解析和元素提取
+#第二部分：网页解析和元素提取
 #可用用XML提取，
 #可以用xlm2提取
 #都是基于‘libxml2’ C library
 #可以用selectr提取
 
 ##########################
-#示例3：使用xml2提取网页
+#示例3：使用xml2解析、提取网页
 #########################
 library(xml2)
 doc <- read_html(html)
@@ -83,9 +81,11 @@ xml_find_all(doc, "//a[@class='lorder_name']")[[1]]
 
 
 ##########################
-#示例4：使用XML提取网页
+#示例4：使用XML解析、提取网页
 #########################
+html<-getURL(url)
 doc<-htmlParse(html, encoding = "utf-8")
+
 nodi = getNodeSet(doc, path ="//h6")
 nodi = getNodeSet(doc, path =c("//h6","//h4"))
 nodi = getNodeSet(doc, path =c("//h6 | //h4"))
@@ -151,6 +151,8 @@ library(rvest)
 #使用的其实就是xml2中的read_html进行了读取和解析
 doc <- read_html(url)
 doc %>% html_nodes("h4") %>% html_text()
+
+
 #等效的
 html_nodes(doc,"h4,h6")
 html_node(doc,"h4,h6")
@@ -159,17 +161,17 @@ xml_nodes(doc,"h4,h6")
 xml_node(doc,"h4,h6")
 
 
-
 # 使用CSS selector
 #https://sjp.co.nz/projects/selectr/
 library(selectr)
 querySelectorAll(doc, "div.con_l > div.pho_info > h4")
+
 xpath <- css_to_xpath("div.con_l > div.pho_info > h4")
 xpath
 
 
 ##########################
-#参考资料：xml2，XML批量操作
+#示例7：xml2，XML批量操作
 #########################
 #xml2的示例
 #Here’s a small example working with an inline XML document:
@@ -201,7 +203,7 @@ xml_attr(baz, "id")
 #> [1] "a" "b"
 
 #########################
-#XML 批量化提取的例子
+#示例8：XML 批量化提取多页信息，xpath
 #########################
 #http://stackoverflow.com/questions/24576962/how-write-code-to-web-crawling-and-scraping-in-r
 library(XML)
@@ -228,14 +230,25 @@ get.picture <- function(href) {
 pictures <- do.call(rbind,lapply(hrefs,get.picture))
 head(pictures)
 
-# 爬民政部社会组织年鉴数据
+#########################
+#示例9：XML 提取爬民政部社会组织信息，table
+#########################
 library(XML)
 library(httr)
+
 urlst <- "http://www.chinanpo.gov.cn/zznjresult.html?netTypeId=1&websitId=100&page_flag=true&goto_page="
+
 urled<-"&current_page=32&total_count=31134&result=&registrationDeptCode=&times=&registrationNo=&managerDeptCode=&orgName=&type=&checkYear=&topid=&to_page=45"
 
 hrefs <- list()
+
 #http://www.chinanpo.gov.cn/zznjresult.html?netTypeId=1&websitId=100&page_flag=true&goto_page=145&current_page=32&total_count=31134&result=&registrationDeptCode=&times=&registrationNo=&managerDeptCode=&orgName=&type=&checkYear=&topid=&to_page=45
+
+# 测试获得第一页的表格
+html<-getURL(paste0(urlst,1,urled),.encoding='GB2312')
+tables <- readHTMLTable(html,stringsAsFactors = FALSE)
+data<- tables[[4]]
+
 
 #最终命令
 library(RCurl)
@@ -250,16 +263,13 @@ for(i in 1077:1557){
 # 修改变量名
 names(data) <- c('num','name','id','af','co','re')
 data$num <- as.numeric(data$num)
-setwd('/Users/liding/E/Bdata/rtemp/data')
+
 write.table(data, "chinanpo.csv", row.names=TRUE, sep=",")
 
 
-
-# 最开始的时候通过下面的代码测试获得第一页的表格
-html<-getURL(paste0(urlst,1,urled),.encoding='GB2312')
-tables <- readHTMLTable(html,stringsAsFactors = FALSE)
-data<- tables[[4]]
-
+#########################
+#示例10：XML 批量化提取多页table，编译GIS地址
+#########################
 #抓取美国大学名单列表
 #https://collegestats.org/colleges/all/?pg=1
 library(RCurl)
@@ -286,7 +296,6 @@ ucdata <- read_csv("/Users/liding/E/Bdata/rtemp/data/usacolleges.csv")
 #编译地址
 library(ggmap)
 sadd <- paste(data[1:24,2],data[1:24,3],data[1:24,4],sep =" ")
-
 
 library(RCurl)
 library(RJSONIO)
@@ -319,11 +328,12 @@ gGeoCode <- function(address,verbose=FALSE) {
 gGeoCode(c("Philadelphia, PA","New York, NY"))
 
 
-
 geoadd <- gGeoCode(sadd)
 
+#########################
+#示例11：rvest提取抓取新浪调查页面，css Selector
+#########################
 
-##抓取新浪调查页面
 #http://survey.news.sina.com.cn/list_all.php?dpc=1&state=going&page=2
 library(plyr)
 library(rvest)
@@ -345,7 +355,7 @@ for(i in 41:732){
     link1[i]<-link[[i]][1]
  # link1  #查看link1
   
-  data<-matrix(,40,4)  # 定义一个40行，6列的矩阵
+  data<-matrix(40,4)  # 定义一个40行，4列的矩阵
   data[,1]<-sbiaoti
   data[,2]<-ssort
   data[,3]<-sdate
@@ -359,8 +369,105 @@ head(Alldata)  #查看Alldata数据前6行
 setwd('/Users/liding/E/Bdata/rtemp/data')
 write.csv(Alldata,file="sinasurveylist.csv",quote=F,row.names = F)  #保存csv文件中
 
-## 一步抓取表格
-#自带请求器的解析包，而且还是嵌入的pantomjs无头浏览器
+#########################
+# 示例12：正则表达式抓取
+#########################
+# 邮件地址的表达式
+# 从下面三个字符中抽取邮件地址
+word <- c('abcnoboby@stat.berkeley.edu','text with no email','first me@mything.com alsoyou@yourspace.com')
+
+pattern <-'[-A-Za-z0-9_.%]+@[-A-Za-z0-9_.%]+\\.[A-Za-z]+'
+
+#标定位置
+(gregout <- gregexpr(pattern,word))
+# 抽取
+substr(word[1],gregout[[1]],gregout[[1]]+attr(gregout[[1]],'match.length')-1)
+
+#通常我们会定义一个抽取函数,更方便
+getcontent <- function(s,g){
+  substring(s,g,g+attr(g,'match.length')-1)
+}
+#使用函数
+getcontent(word[1],gregout[[1]])
+
+#########################
+#下面要抓取豆瓣电影中250部最佳电影的资料：
+library(httr)
+library(xml2)
+url<-'https://movie.douban.com/top250?format=text%27'
+#readLines,注意先检验上面的网址是否与浏览器中完全一致
+web <-readLines("doubao.txt",encoding="UTF-8")
+
+#如果readLiness不能直接用，所以用了上面的命令
+# 获取网页原代码，以行的形式存放在web变量中
+html<-GET(url)
+web<-content(html,"text")
+setwd("/Users/liding/E/Bdata/liding17/2017R/l145spider")
+writeLines(web,"doubao.txt")
+web <-readLines("doubao.txt",encoding="UTF-8")
+
+###批量获取250页数据
+url<-'https://movie.douban.com/top250?format=text%27'
+web <- readLines(url,encoding="UTF-8")
+for(i in 1:9){
+  url1<-paste('https://movie.douban.com/top250?start=',25*i,'&filter=',sep="")
+  web1 <- readLines(url1,encoding="UTF-8")
+  web<-c(web,web1)  
+}
+
+###
+
+
+# 定义一个函数
+getcontent <- function(s,g){
+  substring(s,g,g+attr(g,'match.length')-2)
+}
+
+# 找到包含电影名称的行编号
+name <- web[grep(' <div class="hd">',web)+2]
+
+# 用正则表达式来提取电影名
+gregout <- gregexpr('>\\W+<',name)
+
+movie.names = 0
+for(i in 1:length(gregout)){
+  movie.names[i]<-getcontent(name[i],gregout[[i]])
+}
+movie.names <- sub('>','',movie.names)
+
+
+# 找到包含电影发行年份的行编号并进行提取
+year <- web[grep('<div class="star">',web)-4]
+movie.year <- substr(year,29,32)
+
+# 找到包含电影评分的行编号并进行提取
+score <- web[grep('<span class="rating_num" property="v:average">',web)]
+movie.score <- substr(score,79,81)
+
+# 找到包含电影评价数量的行编号并进行提取
+rating <- web[grep('<span class="rating_num" property="v:average">',web)+2]
+
+library(stringr)
+movie.rating <- substr(rating,32,str_length(rating)-10)
+movie.rating <- sub('<span>','',movie.rating)
+
+# 合成为数据框
+movie <-data.frame(names=movie.names,year=as.numeric(movie.year),score=as.numeric(movie.score),rate=as.numeric(movie.rating))
+
+# 绘散点图
+library(ggplot2)
+
+p <-ggplot(data=movie,aes(x=year,y=score))
+p+geom_point(aes(size=rate),colour='lightskyblue4',
+             position="jitter",alpha=0.8)+
+  geom_point(aes(x=1997,y=8.9),colour='red',size=4)
+
+
+#########################
+# 示例12：phantomjs渲染后一步抓取表格
+#########################
+
+#自带请求器的解析包而且还是嵌入的pantomjs无头浏览器
 # phantomjs渲染效果，直接抓取格式化网页 例子很好
 # phantomjs 安装之后需要修改环境变量
 # http://note.youdao.com/noteshare?id=25579f889483fca14ffb134775b96309
@@ -371,13 +478,16 @@ library(magrittr)
 URL<-"https://www.aqistudy.cn/historydata/monthdata.php?city=北京"
 library("rdom")
 library(XML)
+library(stringr)
 tbl <- rdom(URL) %>% readHTMLTable(header=TRUE) %>% `[[`(1)
 names(tbl) <- names(tbl) %>% stri_conv(from="utf-8")
 DT::datatable(tbl)
 
 
 library("rvest") 
-URL<-"https://www.aqistudy.cn/historydata/monthdata.php?city=北京" %>% xml2::url_escape(reserved ="][!$&'()*+,;=:/?@#")
+URL<-"https://www.aqistudy.cn/historydata/monthdata.php?city=北京" 
+
+URL%>% xml2::url_escape(reserved ="][!$&'()*+,;=:/?@#")
 
 library(RCurl)
 header<-c("User-Agent"="Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36") 
@@ -387,4 +497,109 @@ mytable <- getURL(URL,httpheader=header,.encoding="UTF-8") %>% htmlParse(encodin
 #rvest
 
 mytable <- URL %>%  read_html(encoding ="UTF-8") %>% html_table(header=TRUE) %>% `[[`(1) 
+
+
+#########################
+# 示例13：Rselenium+ phantomjs 抓取动态网页 
+#########################
+
+# 下载selenium，放到某个目录
+#  已经安装了java的情况下才能运行
+# http://selenium-release.storage.googleapis.com/index.html?path=3.8/
+
+# 示例：https://ask.hellobi.com/blog/datamofang/10742
+# 说明：https://cran.r-project.org/web/packages/RSelenium/vignettes/RSelenium-basics.html
+
+system("java -jar \"/Users/liding/anaconda/selenium-server-standalone-3.8.1.jar\"",wait = FALSE,invisible = FALSE)
+
+library("RSelenium")
+library("magrittr")
+library("xml2")
+
+#给plantomjs浏览器伪装UserAgent
+eCap <- list(phantomjs.page.settings.userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:29.0) Gecko/20120101 Firefox/29.0")
+###伪装浏览器UserAgent,为什么即使使用plantomjs这种浏览器也需要伪装UA呢，
+###因为plantomjs是专门用于web端页面测试的，通常都是在自己的web项目中测试web端功能，直接拿去抓别人的网站，默认的UA就是plantomjs；
+###这是公然的挑衅！
+
+###连接phantomjs服务，简单使用
+remDr <- remoteDriver(remoteServerAddr="localhost",
+                      port=4444L,
+                      browserName = "phantomjs", extraCapabilities = eCap)
+
+remDr$open()
+
+remDr$navigate("http://www.google.com/ncr")
+
+remDr$navigate("http://www.bbc.co.uk")
+
+
+#### 正式开始
+remDr <- remoteDriver(browserName = "phantomjs", extraCapabilities = eCap)
+
+#自动化抓取函数：
+myresult<-function(remDr,url){
+  ###初始化一个数据框，用作后期收据收集之用！
+  myresult<-data.frame() 
+  ###调用后台浏览器（因为是plantomjs这种无头浏览器（headless），所以你看不到弹出窗口）
+  remDr$open()
+  ###打开导航页面（也就是直达要抓取的目标网址）
+  remDr$navigate(url) 
+  ###初始化一个计时器（用于输出并查看任务进度）
+  i = 0
+  while(TRUE){
+    #计时器开始计数：
+    i = i+1
+    #范回当前页面DOM
+    pagecontent<-remDr$getPageSource()[[1]]
+    #以下三个字段共用一部分祖先节点，所以临时建立了一个根节点（节省冗余代码）
+    con_list_item       <- pagecontent %>% read_html() %>% xml_find_all('//ul[@class="item_con_list"]/li')
+    #职位名称
+    position.name       <- con_list_item %>% xml_attr("data-positionname") 
+    #公司名称
+    position.company    <- con_list_item %>% xml_attr("data-company") 
+    #职位薪资
+    position.salary     <- con_list_item %>% xml_attr("data-salary") 
+    #职位详情链接
+    position.link       <- pagecontent %>% read_html() %>% xml_find_all('//div[@class="p_top"]/a') %>% xml_attr("href")
+    #职位经验要求
+    position.exprience  <- pagecontent %>% read_html() %>% xml_find_all('//div[@class="p_bot"]/div[@class="li_b_l"]') %>% xml_text(trim=TRUE) 
+    #职位所述行业
+    position.industry   <- pagecontent %>% read_html() %>% xml_find_all('//div[@class="industry"]') %>% xml_text(trim=TRUE) %>% gsub("[[:space:]\\u00a0]+|\\n", "",.)
+    #职位福利
+    position.bonus      <- pagecontent %>% read_html() %>% xml_find_all('//div[@class="list_item_bot"]/div[@class="li_b_l"]') %>% xml_text(trim=TRUE) %>% gsub("[[:space:]\\u00a0]+|\\n", "/",.)
+    #职位工作环境
+    position.environment<- pagecontent %>% read_html() %>% xml_find_all('//div[@class="li_b_r"]') %>% xml_text(trim=TRUE) 
+    #收集数据
+    mydata<- data.frame(position.name,position.company,position.salary,position.link,position.exprience,position.industry,position.bonus,position.environment,stringsAsFactors = FALSE)
+    #将本次收集的数据写入之前创建的数据框
+    myresult<-rbind(myresult,mydata)
+    #系统休眠0.5~1.5秒
+    Sys.sleep(runif(1,0.5,1.5))
+    #判断页面是否到尾部
+    if ( pagecontent %>% read_html() %>% xml_find_all('//div[@class="page-number"]/span[1]') %>% xml_text() !="30"){
+      #如果页面未到尾部，则点击下一页
+      remDr$findElement('xpath','//div[@class="pager_container"]/a[last()]')$clickElement()
+      #但因当前任务进度
+      cat(sprintf("第【%d】页抓取成功",i),sep = "\n")
+    } else {
+      #如果页面到尾部则跳出while循环
+      break
+    }
+  }
+  #跳出循环后关闭remDr服务窗口
+  remDr$close() 
+  #但因全局任务状态（也即任务结束）
+  cat("all work is done!!!",sep = "\n")
+  #返回最终数据
+  return(myresult)
+}
+
+
+url <- "https://www.lagou.com/zhaopin"
+myresult <- myresult(remDr,url)
+#预览
+DT::datatable(myresult)
+
+
 
