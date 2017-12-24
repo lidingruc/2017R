@@ -294,65 +294,82 @@ commit之后，修改只是保存在了缓存库里面。
 
 # Rmarkdown 使用方法演示
 
-## 数据分析任务
-呈现全球国家的预期寿命(life expectancy)和人均GDP(GDP per capita)之间的关系. Hans Rosling曾经做个一个[TED演讲](https://www.ted.com/talks/hans_rosling_shows_the_best_stats_you_ve_ever_seen#t-1174047)。
 
-## 第一步: 创建文件并加载必要的包（packages）
+# R数据分析例子2<br>川普支持度(不讲)
 
-- 下面将使用 `dplyr`包 (用于数据处理 data wrangling) 和
-`ggplot2` (用于作图，visualization) .
+## 了解数据源
 
-- 首先要确保这些包都安装了（installed）.
+这个例子来自 https://paulvanderlaken.com/2017/06/20/tidyverse-example-trump-approval-rate/
 
-- 在markdown中加载（Load）这些包:
+[Obama](http://m.rasmussenreports.com/public_content/politics/obama_administration/obama_approval_index_history)
 
+[Trump](http://m.rasmussenreports.com/public_content/politics/trump_administration/trump_approval_index_history)
+
+## 第一步：加载必要的包，设定
 ```{r message=FALSE}
-library(dplyr)
-library(ggplot2)
+if (!require(hrbrthemes)) install.packages('hrbrthemes')
+if (!require(rvest)) install.packages('rvest')	
+library(tidyverse)
 ```
 
-## 第二步: 导入数据
+## 第二步：获取网页中的表格
+
+对两个网页做同样的事情
+```{r}
+list(
+  Obama="http://m.rasmussenreports.com/public_content/politics/obama_administration/obama_approval_index_history",
+  Trump="http://m.rasmussenreports.com/public_content/politics/trump_administration/trump_approval_index_history"
+) %>% 
+  map_df(~{
+    read_html(.x) %>%
+      html_table() %>%
+      .[[1]] %>%
+      tbl_df() %>%
+      select(date=Date, approve=`Total Approve`, disapprove=`Total Disapprove`)
+  }, .id="who") -> ratings
+```
+
+## 第三步：处理变量
 
 ```{r}
-gapminder <- read.csv("https://stat.duke.edu/~mc301/data/gapminder.csv")
+data <- mutate_at(ratings, 
+                  c("approve", "disapprove"), 
+                  function(x) as.numeric(gsub("%", "", x,fixed=TRUE))/100) %>%
+  mutate(date = lubridate::dmy(date)) %>%
+  filter(!is.na(approve)) %>%
+  group_by(who) %>%
+  arrange(date) %>%
+  mutate(dnum = 1:n()) %>%
+  ungroup()
+
 ```
 
-## 第三步: 筛选数据
-
-- 以`gapminder` 数据集（dataset）开始
-
-- 选择年份（year）变量等于2007的案例
-
-- 将筛选出来的案例存到一个新的数据集`gap07`
-
-```{r}
-gap07 <- gapminder %>%
-  filter(year == 2007)
+## 第四步：作图
+```{r, eval= FALSE}
+ggplot(data,aes(dnum, approve, color=who)) +
+  geom_hline(yintercept = 0.5, size=0.5) +
+  geom_point(size=0.25) +
+  scale_y_percent(limits=c(0,1)) +
+  scale_color_manual(name=NULL, values=c("Obama"="#313695", "Trump"="#a50026")) +
+  labs(x="Day in office", y="Approval Rating",
+       title="Presidential approval ratings from day 1 in office",
+       subtitle="Data was taken solely from Trump's favorite polling site (Ramussen)",
+       caption="Data Source: \nCode: rasmussenreports.com") 
 ```
 
-## 第四步: 探索和可视化（Explore and visualize）
-
-**任务:** 呈现 `gdpPercap` 与`lifeExp`之间的关系.
-
-```{r, fig.height=4, fig.width=7}
-qplot(x = gdpPercap, y = lifeExp, data = gap07)
+## 第四步：作图{#myImagePage}
+```{r,echo= FALSE }
+ggplot(data,aes(dnum, approve, color=who)) +
+  geom_hline(yintercept = 0.5, size=0.5) +
+  geom_point(size=0.25) +
+  scale_y_percent(limits=c(0,1)) +
+  scale_color_manual(name=NULL, values=c("Obama"="#313695", "Trump"="#a50026")) +
+  labs(x="Day in office", y="Approval Rating",
+       title="Presidential approval ratings from day 1 in office",
+       subtitle="Data was taken solely from Trump's favorite polling site (Ramussen)",
+       caption="Data Source: \nCode: rasmussenreports.com") 
 ```
 
-## 第五步: 深入分析1
-
-**任务:** 各个大陆的点使用不同的颜色.
-
-```{r, fig.height=4, fig.width=7}
-qplot(x = gdpPercap, y = lifeExp, color = continent, data = gap07)
-```
-
-## 第五步: 深入分析2
-
-**任务:** 在设定点的大小与人口规模成正比.
-
-```{r, fig.height=4, fig.width=7}
-qplot(x = gdpPercap, y = lifeExp, color = continent, size = pop,data = gap07)
-```
 
 ## 自己动手试试？
 
