@@ -204,31 +204,117 @@ xml_attr(baz, "id")
 
 #########################
 #示例8：XML 批量化提取多页信息，xpath
+#与json方式
 #########################
 #http://stackoverflow.com/questions/24576962/how-write-code-to-web-crawling-and-scraping-in-r
 library(XML)
 library(httr)
-url <- "http://www.wikiart.org/en/claude-monet/mode/all-paintings-by-alphabet/"
+
+# 单步分解
+# 网页地址固定部分
+url <- "http://www.wikiart.org/en/claude-monet/mode/all-paintings-by-alphabet/?page="
+
+# 第二页，总共22页
+i <- 2
+
+# 设置一个空的list准备存网页链接
 hrefs <- list()
-for (i in 1:23) {
+
+# 获取索引页内容，打印出来查看实际获得的代码
+response <- GET(paste0(url,i))
+doc <- content(response,type="text")
+cat(doc,file="monet.html")
+
+# 解析网页、获取对应的链接
+doc <- htmlParse(response)
+doc["//ul[@class='title']/li[1]/a/@href"]
+
+# 将新获得链接与已经获得的部分合并
+hrefs    <- c(hrefs,doc["//ul[@class='title']/li[1]/a/@href"])
+
+# 构建一个详情页的网址
+url      <- "http://www.wikiart.org"
+paste0(url,hrefs[1])
+
+#获取一个详情页
+response <- GET(paste0(url,hrefs[1]))
+doc <- content(response,type="text")
+cat(doc,file="monet1.html")
+
+doc <- htmlParse(response)
+
+# 打开获取代码，查找相关信息，可以看到
+
+# 画名在 h1下面的span中
+
+doc["//h1/span[@itemprop='name']"]
+# 创作时间
+doc["//span[@itemprop='dateCreated']"]
+# 作者
+doc["//div[@class='artwork-title']/a[@class='artist-name']"]
+# 风格
+doc["//div[@class='info-line'][2]/a/span"]
+# 流派
+doc["//span[@itemprop='genre']"]
+
+
+###   正式命令，有22页，全部获取时间较长，建议只获取前2页。
+
+url <- "http://www.wikiart.org/en/claude-monet/mode/all-paintings-by-alphabet/?page="
+hrefs <- list()
+for (i in 1:2) {
   response <- GET(paste0(url,i))
-  doc      <- content(response,type="text/html")
-  hrefs    <- c(hrefs,doc["//p[@class='pb5']/a/@href"])
+  # doc      <- content(response,type="text/html")
+  doc <- htmlParse(response)
+  hrefs    <- c(hrefs,doc["//ul[@class='title']/li[1]/a/@href"])
 }
 
 url      <- "http://www.wikiart.org"
-xPath    <- c(pictureName = "//h1[@itemprop='name']",
+
+# 定义xpath锚点集合
+xPath    <- c(pictureName = "//h1/span[@itemprop='name']",
               date        = "//span[@itemprop='dateCreated']",
-              author      = "//a[@itemprop='author']",
-              style       = "//span[@itemprop='style']",
+              author      = "//div[@class='artwork-title']/a[@class='artist-name']",
+              style       = "//div[@class='info-line'][2]/a/span",
               genre       = "//span[@itemprop='genre']")
+
+# 定义信息提取函数
 get.picture <- function(href) {
   response <- GET(paste0(url,href))
-  doc      <- content(response,type="text/html")
+  doc <- htmlParse(response)
   info     <- sapply(xPath,function(xp)ifelse(length(doc[xp])==0,NA,xmlValue(doc[xp][[1]])))
 }
+
+
+# 批量获取22页信息，获取时间较长。
 pictures <- do.call(rbind,lapply(hrefs,get.picture))
+
 head(pictures)
+write.csv(pictures,file="monet.csv")
+
+
+## 网页分析发现，这些信息也在头部信息中，我们可以想办法获取这些信息
+#  <meta name="description" content="Apple Trees in Bloom, 1873 by Claude Monet. Impressionism. landscape" />
+
+
+# 网页分析也可以发现，索引页在json中。我们可以在其中获得网页地址，详情页。
+
+# https://www.wikiart.org/en/claude-monet/mode/all-paintings-by-alphabet?json=2&page=1
+
+library(rjson)
+help(library="rjson")
+
+library(RCurl)
+
+url <- "https://www.wikiart.org/en/claude-monet/mode/all-paintings-by-alphabet?json=2&page=1"
+response <- getURL(url)
+dat <- fromJSON(response)
+hrefs <- list()
+for (i in 1:20){
+ hrefs <- c(hrefs, dat$Paintings[[i]]$paintingUrl[1])
+}
+
+# 再嵌套一个循环即可获得所有详情页链接
 
 #########################
 #示例9：XML 提取爬民政部社会组织信息，table
@@ -409,7 +495,7 @@ web <-readLines("doubao.txt",encoding="UTF-8")
 ###批量获取250页数据
 url<-'https://movie.douban.com/top250?format=text%27'
 web <- readLines(url,encoding="UTF-8")
-for(i in 1:9){
+for(i in 0:9){
   url1<-paste('https://movie.douban.com/top250?start=',25*i,'&filter=',sep="")
   web1 <- readLines(url1,encoding="UTF-8")
   web<-c(web,web1)  
