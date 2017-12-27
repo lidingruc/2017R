@@ -510,7 +510,7 @@ mytable <- URL %>%  read_html(encoding ="UTF-8") %>% html_table(header=TRUE) %>%
 # 示例：https://ask.hellobi.com/blog/datamofang/10742
 # 说明：https://cran.r-project.org/web/packages/RSelenium/vignettes/RSelenium-basics.html
 
-system("java -jar \"/Users/liding/anaconda/selenium-server-standalone-3.8.1.jar\"",wait = FALSE,invisible = FALSE)
+system("java -jar \"/Users/liding/anaconda/selenium-server-standalone-3.8.1.jar\"")
 
 library("RSelenium")
 library("magrittr")

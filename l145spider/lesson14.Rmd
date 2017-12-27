@@ -156,7 +156,7 @@ XPath:  /body/h1
 
 ## 网页结构:DOM {#myImagePage0}
 
- Document Object Model(DOM).中可以通过name、id、class、css Selector、xpath进行定位。
+Document Object Model(DOM).中可以通过name、id、class、css Selector、xpath进行定位。
  
 ![](pic/5.png) 
 
