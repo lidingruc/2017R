@@ -3,6 +3,7 @@
 # 李丁 liding@ruc.edu.cn
 #########################
 # 第一题
+library(tidyverse)
 patientID <- c(1, 2, 3, 4)
 age <- c(25, 34, 28, 52)
 diabetes <- c("Type1", "Type2", "Type1", "Type1")
@@ -26,7 +27,6 @@ pdata$diabetes[pdata$age==52] <- "Type2"
 pdata$age2=age-18
 
 #7
-library(magrittr)
 pdata <- pdata %>% mutate(status=forcats::fct_recode(status,"Fair"="Poor","Fair" = "Improved","Excellent" = "Excellent"))
 
 # 8
@@ -61,23 +61,21 @@ t.test(data=cred2,spent~year)
 t.test(data=cred2,pspent~year)
 
 # （6）长变宽
-library(tidyverse)
-
 # 方法1
 library(tidyr)
 wred <- cred2 %>%
   gather(variable, value, -(c(custid:card_date))) %>%
-  unite(temp, year, variable) %>%
+  unite(temp, variable,year) %>%
   spread(temp, value)
 
 # 方法2
 library(reshape2)
 md <- melt(cred2, id=c("custid","year","dob","gender","card","card_date"))
-md1 <- dcast(md, custid~year+variable)
+wred <- dcast(md, custid~variable+year)
 
 # 方法3
-library(data.table) 
-wred <- dcast(setDT(cred2), custid + dob + gender +card +card_date ~ year, value.var = c("spent", "items","pspent")) 
+library(data.table)
+wred <- data.table::dcast(setDT(cred2), custid + dob + gender +card +card_date ~ year, value.var = c("spent", "items","pspent")) 
 
 #（5）配对样本T检验，这个年份比较更正确
 t.test(wred$spent_2007,wred$spent_2008,paired =TRUE)
@@ -130,6 +128,6 @@ data <- c(biaoti,xiaoqu,danjia,pingjia,fangzhu)
 data <- sapply(data, xmlValue) 
 datas <- rbind(datas,data)
 names(datas) <- c("biaoti","xiaoqu","danjia","pingjia","fangzu")
-
+datas
 
 
