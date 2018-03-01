@@ -202,7 +202,8 @@ w <- which(sapply(cgss2003, class) == 'labelled')
 cgss2003[w] <- lapply(cgss2003[w], 
                       function(x) as.numeric(as.character(x))
                       )
-sjPlot::sjp.setTheme(theme.font ='STXihei' )
+sjPlot::set_theme(theme.font ='STXihei' )
+
 cgss2003 %>%
   select(sitetype) %>% sjPlot::sjplot(fun="frq")
 ```
@@ -222,7 +223,7 @@ cgss2003 %>%
 cgss <- foreign::read.spss("CGSS2003.sav",reencode = "GB2312",to.data.frame=TRUE,add.undeclared.levels="no")
 ```
 
-foreign包的`read.spss`导入的数据,变量标签存在于数据集的variable.labels属性当中。没有转变为因子变量的取值标签存在变量的value.labels属性中。
+foreign包的`read.spss`导入的数据,变量标签存在于数据集的variable.labels属性当中。没有转变为因子变量的取值标签存在变量的value.labels属性中。#SPSS的日期以1582年10月14日为基准，通过加上++ISOdate(1582,10,14)即可转为R的时间格式。
 
 
 ```{r,warning= FALSE}
@@ -246,6 +247,7 @@ cgss[cgss==-3] <- NA
 cgss <- droplevels(cgss)
 ggplot(data=cgss,aes(x=sitetype))+geom_bar() +theme(text=element_text(family="STKaiti"))
 #SimSun、SimHei 、STHeiti、 STXihei 
+
 ```
 
 

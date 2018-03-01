@@ -153,9 +153,10 @@ p + theme_clean()
 ## Loading required package: sp
 ## Checking rgeos availability: TRUE
 library(maptools)
+library(ggplot2)
 
-setwd("/Users/liding/E/Bdata/rtemp/analysis/example/ch17/")
-# 载入空间数据并转化成数据框
+setwd("//Users/liding/E/Bdata/Course/2R/analysis/example/ch17/")
+# 载入省级边界数据并转化成数据框
 china_shp <- readShapePoly("bou2_4p.shp")
 # 返回一个 SpatialPolygonsDataFrame 对象
 # str(china_shp)
@@ -169,6 +170,7 @@ p <- ggplot(china_map, aes(x = long, y = lat, group = group)) +
   geom_path() +
   labs(title = "China Map")
 # 绘制空白背景的地图
+# theme_clean() 函数是在上面定义的
 p + theme_clean()
 
 ################

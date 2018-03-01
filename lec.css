@@ -54,6 +54,12 @@ pre {
   width: 95%;
   height: 95%;
 }
+#myImagePage80 img {
+  width: 80%;
+  height: 80%;
+}
+
+
 #myImagePage60 img {
   width: 60%;
   height: 60%;
