@@ -1,0 +1,24 @@
+library(maps)         ## Projections#
+library(maptools)     ## Data management#
+library(sp)           ## Data management#
+library(spdep)        ## Spatial autocorrelation#
+library(gstat)        ## Geostatistics#
+library(splancs)      ## Kernel Density#
+library(spatstat)     ## Geostatistics#
+library(pgirmess)     ## Spatial autocorrelation#
+library(RColorBrewer) ## Visualization#
+library(classInt)     ## Class intervals#
+library(spgwr)        ## GWR
+summary(election)#
+names(election)#
+data <- election
+setwd("/Users/liding/E/Bdata/liding17/2017R/l12spa/intro")	## Mac#
+# setwd("C:\\") 					## Windows               #
+load("Datasets.RData")#
+ls()
+summary(election)#
+names(election)#
+data <- election
+summary(data)[1:4]
+par(mar=c(0,0,0,0))#
+plot(data)

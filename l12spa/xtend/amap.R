@@ -47,7 +47,7 @@ head(world_map)
 # 绘制指定区域的地图数据
 # 绘制欧洲足球五大联赛所在地
 euro <- map_data("world", region = c("UK","France", "Spain","Germany", "Italy"))
-ggplot(euro, aes(x=long, y = lat, group=group,fill=region)) +
+ggplot(euro, aes(x=long, y = lat, group=group, fill=region)) +
   geom_polygon(colour="black") +
   scale_fill_brewer(palette = "Set2") +
   scale_y_continuous(limits=c(40,60)) +
@@ -155,9 +155,9 @@ p + theme_clean()
 library(maptools)
 library(ggplot2)
 
-setwd("//Users/liding/E/Bdata/Course/2R/analysis/example/ch17/")
+setwd("/Users/liding/E/Bdata/liding17/2017R/l12spa/map/chinaadm/CHN/")
 # 载入省级边界数据并转化成数据框
-china_shp <- readShapePoly("bou2_4p.shp")
+china_shp <- readShapePoly("CHN_adm1.shp")
 # 返回一个 SpatialPolygonsDataFrame 对象
 # str(china_shp)
 
@@ -533,7 +533,49 @@ p1
 #https://www.quora.com/Alternative-to-Google-Maps-Distance-Matrix-API
 #https://developer.mapquest.com/documentation/directions-api/route-matrix/post/
   
-  
-  
-  
+
+#Make a US County Thematic Map Using R
+#https://gist.github.com/hadley/233134
+library(ggplot2)
+library(maps)
+
+# First (and most annoying) task - get matching state and county variables 
+# for both datasets.  And unfortauntely it's not quite right, as you can
+# see from the finish product - some counties are missing.
+unemp <- read.csv("http://datasets.flowingdata.com/unemployment09.csv", header = F, stringsAsFactors = F)
+names(unemp) <- c("id", "state_fips", "county_fips", "name", "year", 
+                  "?", "?", "?", "rate")
+unemp$county <- tolower(gsub(" County, [A-Z]{2}", "", unemp$name))
+unemp$state <- gsub("^.*([A-Z]{2}).*$", "\\1", unemp$name)
+
+county_df <- map_data("county")
+names(county_df) <- c("long", "lat", "group", "order", "state_name", "county")
+county_df$state <- state.abb[match(county_df$state_name, tolower(state.name))]
+county_df$state_name <- NULL
+
+state_df <- map_data("state")
+
+# Combine together 
+choropleth <- merge(county_df, unemp, by = c("state", "county"))
+choropleth <- choropleth[order(choropleth$order), ]
+# Discretise rate to use with Brewer colour scheme - many options here
+# choropleth$rate_d <- cut_number(choropleth$rate, 5)
+# choropleth$rate_d <- cut_interval(choropleth$rate, 5)
+# Nathan's choice is a little odd:
+choropleth$rate_d <- cut(choropleth$rate, breaks = c(seq(0, 10, by = 2), 35))
+
+# Once you have the data in the right format, recreating the plot is straight
+# forward.
+# 美国地图，非常快！
+ggplot(choropleth, aes(long, lat, group = group)) +
+  geom_polygon(aes(fill = rate_d), colour = alpha("white", 1/2), size = 0.2) + 
+  geom_polygon(data = state_df, colour = "white", fill = NA) +
+  scale_fill_brewer(palette = "PuRd")
+
+ggplot(choropleth, aes(long, lat, group = group)) +
+  geom_polygon(aes(fill = rate_d), colour = "gray85", size = 0.2) + 
+  geom_polygon(data = state_df, colour = "white", fill = NA) +
+  scale_fill_brewer(palette = "PuRd")
+
+
   
